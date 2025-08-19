@@ -7,7 +7,7 @@ const dts = require('rollup-plugin-dts');
 const packageJson = require('./package.json');
 
 module.exports = [
-  // ESM build
+  // Optimized ESM build
   {
     input: 'src/index.ts',
     output: {
@@ -20,12 +20,24 @@ module.exports = [
       commonjs(),
       typescript({
         tsconfig: './tsconfig.build.json',
-        declaration: false, // We'll generate declarations separately
+        declaration: false,
+      }),
+      terser({
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        },
+        mangle: {
+          properties: {
+            regex: /^_/,
+          },
+        },
       }),
     ],
     external: ['react', 'rxjs', 'use-sync-external-store/shim'],
   },
-  // CommonJS build
+  // Optimized CommonJS build
   {
     input: 'src/index.ts',
     output: {
@@ -41,28 +53,16 @@ module.exports = [
         declaration: false,
         declarationDir: undefined,
       }),
-    ],
-    external: ['react', 'rxjs', 'use-sync-external-store/shim'],
-  },
-  // Minified ESM build
-  {
-    input: 'src/index.ts',
-    output: {
-      file: 'dist/index.min.js',
-      format: 'esm',
-      sourcemap: false,
-    },
-    plugins: [
-      resolve(),
-      commonjs(),
-      typescript({
-        tsconfig: './tsconfig.build.json',
-        declaration: false,
-        declarationDir: undefined,
-      }),
       terser({
         compress: {
           drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        },
+        mangle: {
+          properties: {
+            regex: /^_/,
+          },
         },
       }),
     ],

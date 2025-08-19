@@ -17,7 +17,7 @@
 - ⚛️ **React 17+ Support** - Compatible with modern React versions
 - 🔄 **RxJS Integration** - Built on robust reactive primitives
 - 🎯 **TypeScript First** - Full type safety out of the box
-- 📦 **Optimized Bundle** - 17.6kB with world-class performance included
+- 📦 **Optimized Bundle** - 17.6kB with performance included
 - 🔧 **useSyncExternalStore** - Uses React's official external store API
 - 🔥 **Advanced Lifecycle Hooks** - Signal-aware effects with error handling
 
@@ -548,12 +548,11 @@ try {
 
 ### 🎯 **Bundle Size Optimization**
 
-- **Optimized Package**: **17.6 kB** package size, **96.3 kB** unpacked with all optimizations
-- **Multiple Formats**: ESM (31.0 kB), CommonJS (31.4 kB), Minified (11.1 kB) builds
+- **Optimized Package**: **13.7 kB** package size, **50.3 kB** unpacked (50% size reduction!)
+- **Minified Builds**: ESM (10.8 kB), CommonJS (11.2 kB) with aggressive terser optimization
 - **Single Declaration File**: Combined TypeScript definitions (3.1 kB)
 - **Tree-shakable**: `sideEffects: false` enables optimal bundling
 - **Built with Rollup**: Advanced bundling with optimized code splitting
-- **Minimal dependencies**: Only RxJS required
 
 ### 🔨 **Build & Analysis**
 
@@ -618,7 +617,7 @@ function UserProfile() {
 
 ## 🏆 **Performance Benchmarks**
 
-React RX Signals delivers **world-class performance** that outperforms all major state management solutions:
+React RX Signals delivers ** performance** that outperforms all major state management solutions:
 
 ### ⚡ **Enterprise-Grade Optimizations**
 
@@ -636,53 +635,20 @@ const computed1 = createComputed(signal$(), (x) => x * 2);
 const computed2 = createComputed(signal$(), (x) => x * 2); // Returns cached!
 ```
 
-### 📊 **Performance Comparison vs Competitors**
+### 📊 **Performance vs Competitors**
 
-| **Metric**            | **useState** | **Zustand** | **Valtio** | **React RX Signals** | **Improvement**       |
-| --------------------- | ------------ | ----------- | ---------- | -------------------- | --------------------- |
-| **Re-renders/sec**    | 1000+        | 500+        | 800+       | **~50**              | **📉 95% reduction**  |
-| **Memory Usage**      | High         | Medium      | High       | **Minimal**          | **📉 70% less**       |
-| **Subscription Cost** | N/A          | Medium      | High       | **Zero**             | **🚀 100% optimized** |
-| **Error Recovery**    | Crashes      | Limited     | Crashes    | **Bulletproof**      | **🛡️ Unbreakable**    |
-| **Bundle Size**       | 0 kB         | 45 kB       | 90 kB      | **17.6 kB**          | **📦 Best-in-class**  |
-| **Cache Efficiency**  | None         | Basic       | None       | **Enterprise**       | **🏆 Advanced**       |
-
-### 🚀 **World-Class Implementation**
-
-| **Feature**                | **Implementation**                | **Benefit**               |
-| -------------------------- | --------------------------------- | ------------------------- |
-| **Pre-bound Methods**      | `subject.getValue.bind(subject)`  | Zero function creation    |
-| **WeakMap Caching**        | Computed observable deduplication | Prevents duplicate work   |
-| **Object.is Equality**     | NaN/±0 safe comparisons           | Perfect change detection  |
-| **shareReplay + refCount** | Automatic subscription sharing    | Memory + performance      |
-| **Silent Error Handling**  | Try/catch boundaries everywhere   | Never crashes             |
-| **useMemo Subscriptions**  | Memoized React integration        | Prevents re-subscriptions |
-
-### 📊 **Legacy Benchmark Results**
-
-| Scenario                                 | useState                            | react-rx-signals                 | Improvement                 |
-| ---------------------------------------- | ----------------------------------- | -------------------------------- | --------------------------- |
-| 100 components subscribing to same state | 100 re-renders                      | 100 re-renders                   | ~0%                         |
-| 10 components, 1 updates frequently      | 10 re-renders each                  | 1 re-render each                 | **90% fewer**               |
-| Complex derived state (computed values)  | Re-calculates on every render       | Cached until dependencies change | **70-90% faster**           |
-| Cross-component state sharing            | Prop drilling or context re-renders | Direct subscription              | **50-80% fewer re-renders** |
+| **Metric**       | **React RX Signals** | **Zustand** | **Valtio** | **Improvement**      |
+| ---------------- | -------------------- | ----------- | ---------- | -------------------- |
+| **Re-renders**   | **~50/sec**          | 500+        | 800+       | **📉 90% less**      |
+| **Memory**       | **Minimal**          | Medium      | High       | **📉 70% less**      |
+| **Bundle Size**  | **13.7 kB**          | 45 kB       | 90 kB      | **📦 Best**          |
+| **Error Safety** | **Bulletproof**      | Limited     | Crashes    | **🛡️ Never crashes** |
 
 ### 🔍 **Real-World Example**
 
 ```tsx
 // ❌ useState: Updates ALL components
-function App() {
-  const [user, setUser] = useState({ name: 'John', count: 0, theme: 'light' });
-
-  return (
-    <div>
-      <UserName user={user} /> {/* Re-renders when count changes */}
-      <Counter user={user} setUser={setUser} />
-      <ThemeToggle user={user} setUser={setUser} />{' '}
-      {/* Re-renders when count changes */}
-    </div>
-  );
-}
+const [user, setUser] = useState({ name: 'John', count: 0, theme: 'light' });
 
 // ✅ react-rx-signals: Surgical updates
 const [getUser, setUser, user$, selectUser] = createStore({
@@ -691,18 +657,8 @@ const [getUser, setUser, user$, selectUser] = createStore({
   theme: 'light',
 });
 
-function App() {
-  return (
-    <div>
-      <UserName /> {/* Only re-renders when name changes */}
-      <Counter /> {/* Only re-renders when count changes */}
-      <ThemeToggle /> {/* Only re-renders when theme changes */}
-    </div>
-  );
-}
-
 function UserName() {
-  const name = useStore(selectUser('name'), ''); // Granular subscription
+  const name = useStore(selectUser('name'), ''); // Only re-renders when name changes
   return <span>{name}</span>;
 }
 ```
@@ -753,7 +709,7 @@ try {
 
 ## Why React RX Signals?
 
-- **World-Class Performance**: 95% fewer re-renders with enterprise-grade optimizations
+- **Performance**: 95% fewer re-renders with enterprise-grade optimizations
 - **Familiar API**: If you know SolidJS signals, you'll feel right at home
 - **Bulletproof Reliability**: Silent error handling prevents crashes in production
 - **Flexibility**: Built on RxJS - integrate with any reactive stream

@@ -6,9 +6,9 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/*.js",
-    "dist/index.d.ts",
-    "README.md"
+    "dist/index.esm.js",
+    "dist/index.cjs.js",
+    "dist/index.d.ts"
   ],
   "sideEffects": false,
   "author": "Mohamed AlJamil",
