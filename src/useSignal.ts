@@ -1,5 +1,5 @@
-import { useSyncExternalStore } from "use-sync-external-store/shim";
-import type { Observable } from "rxjs";
+import { useSyncExternalStore } from 'use-sync-external-store/shim';
+import type { Observable } from 'rxjs';
 
 export function useSignal<T>(source$: Observable<T>, initial: T) {
   return useSyncExternalStore<T>(

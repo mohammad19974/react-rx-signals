@@ -1,4 +1,4 @@
-import { BehaviorSubject, distinctUntilChanged, map, Observable } from "rxjs";
+import { BehaviorSubject, distinctUntilChanged, map, Observable } from 'rxjs';
 
 export function createSignal<T>(initial: T) {
   const subject = new BehaviorSubject<T>(initial);
@@ -7,7 +7,7 @@ export function createSignal<T>(initial: T) {
 
   const set = (value: T | ((prev: T) => T)) => {
     const newValue =
-      typeof value === "function"
+      typeof value === 'function'
         ? (value as (prev: T) => T)(subject.getValue())
         : value;
     subject.next(newValue);

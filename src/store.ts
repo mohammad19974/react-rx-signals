@@ -1,4 +1,4 @@
-import { BehaviorSubject, distinctUntilChanged, map, Observable } from "rxjs";
+import { BehaviorSubject, distinctUntilChanged, map, Observable } from 'rxjs';
 
 type Updater<T> = (prev: T) => T;
 
@@ -10,7 +10,7 @@ export function createStore<T extends object>(initial: T) {
   const set = (update: Partial<T> | Updater<T>) => {
     const prev = subject.getValue();
     const newValue =
-      typeof update === "function" ? update(prev) : { ...prev, ...update };
+      typeof update === 'function' ? update(prev) : { ...prev, ...update };
     subject.next(newValue);
   };
 
