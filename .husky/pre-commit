@@ -1,0 +1,5 @@
+# Run lint-staged to check and fix staged files
+npx lint-staged
+
+# Run tests to ensure nothing is broken
+npm test

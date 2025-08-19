@@ -34,13 +34,11 @@ const [getCount, setCount, count$] = createSignal(0);
 function Counter() {
   // Use the signal in a component
   const count = useSignal(count$, 0);
-  
+
   return (
     <div>
       <p>Count: {count}</p>
-      <button onClick={() => setCount(prev => prev + 1)}>
-        Increment
-      </button>
+      <button onClick={() => setCount((prev) => prev + 1)}>Increment</button>
     </div>
   );
 }
@@ -66,7 +64,7 @@ console.log(getName()); // 'John'
 
 // Set new value
 setName('Jane');
-setName(prev => prev.toUpperCase());
+setName((prev) => prev.toUpperCase());
 ```
 
 ### `createStore<T>(initialState: T)`
@@ -88,14 +86,14 @@ interface User {
 
 const [getUser, setUser, user$, selectUser] = createStore<User>({
   name: 'John',
-  age: 30
+  age: 30,
 });
 
 // Update partial state
 setUser({ age: 31 });
 
 // Update with function
-setUser(prev => ({ ...prev, name: prev.name.toUpperCase() }));
+setUser((prev) => ({ ...prev, name: prev.name.toUpperCase() }));
 
 // Select specific property
 const userName$ = selectUser('name');
@@ -107,8 +105,8 @@ Creates a computed value that derives from other reactive sources.
 
 ```tsx
 const [getCount, setCount, count$] = createSignal(10);
-const doubled$ = createComputed(count$, count => count * 2);
-const isEven$ = createComputed(count$, count => count % 2 === 0);
+const doubled$ = createComputed(count$, (count) => count * 2);
+const isEven$ = createComputed(count$, (count) => count % 2 === 0);
 ```
 
 ### `useSignal<T>(observable: Observable<T>, initialValue: T)`
@@ -119,8 +117,12 @@ React hook to subscribe to any observable and get reactive updates.
 function MyComponent() {
   const count = useSignal(count$, 0);
   const doubled = useSignal(doubled$, 0);
-  
-  return <div>Count: {count}, Doubled: {doubled}</div>;
+
+  return (
+    <div>
+      Count: {count}, Doubled: {doubled}
+    </div>
+  );
 }
 ```
 
@@ -132,8 +134,12 @@ Alias for `useSignal` - same functionality, semantic preference for stores.
 function UserProfile() {
   const user = useStore(user$, { name: '', age: 0 });
   const userName = useStore(selectUser('name'), '');
-  
-  return <div>{user.name} is {user.age} years old</div>;
+
+  return (
+    <div>
+      {user.name} is {user.age} years old
+    </div>
+  );
 }
 ```
 
@@ -145,14 +151,14 @@ function UserProfile() {
 import { createSignal, useSignal, createComputed } from 'react-rx-signals';
 
 const [getCount, setCount, count$] = createSignal(0);
-const doubled$ = createComputed(count$, count => count * 2);
+const doubled$ = createComputed(count$, (count) => count * 2);
 
 function Counter() {
   const count = useSignal(count$, 0);
-  
+
   return (
     <div>
-      <button onClick={() => setCount(prev => prev + 1)}>
+      <button onClick={() => setCount((prev) => prev + 1)}>
         Count: {count}
       </button>
     </div>
@@ -183,34 +189,30 @@ interface TodoState {
 
 const [getTodos, setTodos, todos$, selectTodos] = createStore<TodoState>({
   todos: [],
-  filter: 'all'
+  filter: 'all',
 });
 
 function TodoApp() {
   const { todos, filter } = useStore(todos$, getTodos());
   const currentTodos = useStore(selectTodos('todos'), []);
-  
+
   const addTodo = (text: string) => {
-    setTodos(prev => ({
+    setTodos((prev) => ({
       ...prev,
-      todos: [...prev.todos, { id: Date.now(), text, completed: false }]
+      todos: [...prev.todos, { id: Date.now(), text, completed: false }],
     }));
   };
-  
+
   const toggleTodo = (id: number) => {
-    setTodos(prev => ({
+    setTodos((prev) => ({
       ...prev,
-      todos: prev.todos.map(todo => 
+      todos: prev.todos.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
+      ),
     }));
   };
-  
-  return (
-    <div>
-      {/* Todo UI implementation */}
-    </div>
-  );
+
+  return <div>{/* Todo UI implementation */}</div>;
 }
 ```
 
@@ -221,18 +223,17 @@ function TodoApp() {
 export const [getUser, setUser, user$, selectUser] = createStore({
   name: 'Guest',
   isLoggedIn: false,
-  preferences: { theme: 'light' }
+  preferences: { theme: 'light' },
 });
 
 // Header.tsx
 function Header() {
   const userName = useStore(selectUser('name'), 'Guest');
   const isLoggedIn = useStore(selectUser('isLoggedIn'), false);
-  
+
   return (
     <header>
-      Welcome, {userName}!
-      {!isLoggedIn && <button>Login</button>}
+      Welcome, {userName}!{!isLoggedIn && <button>Login</button>}
     </header>
   );
 }
@@ -240,13 +241,17 @@ function Header() {
 // Settings.tsx
 function Settings() {
   const preferences = useStore(selectUser('preferences'), { theme: 'light' });
-  
+
   return (
     <div>
-      <button onClick={() => setUser(prev => ({
-        ...prev,
-        preferences: { ...prev.preferences, theme: 'dark' }
-      }))}>
+      <button
+        onClick={() =>
+          setUser((prev) => ({
+            ...prev,
+            preferences: { ...prev.preferences, theme: 'dark' },
+          }))
+        }
+      >
         Toggle Theme
       </button>
     </div>
@@ -268,12 +273,12 @@ const [getSearch, setSearch, search$] = createSignal('');
 // Debounced search
 const debouncedSearch$ = search$.pipe(
   debounceTime(300),
-  filter(term => term.length > 2)
+  filter((term) => term.length > 2)
 );
 
 function SearchComponent() {
   const searchTerm = useSignal(debouncedSearch$, '');
-  
+
   // This will only update 300ms after user stops typing
   // and only if search term is longer than 2 characters
   useEffect(() => {
@@ -281,9 +286,9 @@ function SearchComponent() {
       performSearch(searchTerm);
     }
   }, [searchTerm]);
-  
+
   return (
-    <input 
+    <input
       onChange={(e) => setSearch(e.target.value)}
       placeholder="Search..."
     />
@@ -304,6 +309,7 @@ function SearchComponent() {
 React RX Signals significantly outperforms `useState` in scenarios with:
 
 ### 🚀 **Multiple Component Updates**
+
 ```tsx
 // useState: Re-renders ALL components when state changes
 const [count, setCount] = useState(0);
@@ -314,12 +320,12 @@ const [getCount, setCount, count$] = createSignal(0);
 
 ### 📊 **Benchmark Results**
 
-| Scenario | useState | react-rx-signals | Improvement |
-|----------|----------|------------------|-------------|
-| 100 components subscribing to same state | 100 re-renders | 100 re-renders | ~0% |
-| 10 components, 1 updates frequently | 10 re-renders each | 1 re-render each | **90% fewer** |
-| Complex derived state (computed values) | Re-calculates on every render | Cached until dependencies change | **70-90% faster** |
-| Cross-component state sharing | Prop drilling or context re-renders | Direct subscription | **50-80% fewer re-renders** |
+| Scenario                                 | useState                            | react-rx-signals                 | Improvement                 |
+| ---------------------------------------- | ----------------------------------- | -------------------------------- | --------------------------- |
+| 100 components subscribing to same state | 100 re-renders                      | 100 re-renders                   | ~0%                         |
+| 10 components, 1 updates frequently      | 10 re-renders each                  | 1 re-render each                 | **90% fewer**               |
+| Complex derived state (computed values)  | Re-calculates on every render       | Cached until dependencies change | **70-90% faster**           |
+| Cross-component state sharing            | Prop drilling or context re-renders | Direct subscription              | **50-80% fewer re-renders** |
 
 ### 🔍 **Real-World Example**
 
@@ -327,27 +333,30 @@ const [getCount, setCount, count$] = createSignal(0);
 // ❌ useState: Updates ALL components
 function App() {
   const [user, setUser] = useState({ name: 'John', count: 0, theme: 'light' });
-  
+
   return (
     <div>
-      <UserName user={user} />        {/* Re-renders when count changes */}
+      <UserName user={user} /> {/* Re-renders when count changes */}
       <Counter user={user} setUser={setUser} />
-      <ThemeToggle user={user} setUser={setUser} /> {/* Re-renders when count changes */}
+      <ThemeToggle user={user} setUser={setUser} />{' '}
+      {/* Re-renders when count changes */}
     </div>
   );
 }
 
 // ✅ react-rx-signals: Surgical updates
 const [getUser, setUser, user$, selectUser] = createStore({
-  name: 'John', count: 0, theme: 'light'
+  name: 'John',
+  count: 0,
+  theme: 'light',
 });
 
 function App() {
   return (
     <div>
-      <UserName />        {/* Only re-renders when name changes */}
-      <Counter />         {/* Only re-renders when count changes */}
-      <ThemeToggle />     {/* Only re-renders when theme changes */}
+      <UserName /> {/* Only re-renders when name changes */}
+      <Counter /> {/* Only re-renders when count changes */}
+      <ThemeToggle /> {/* Only re-renders when theme changes */}
     </div>
   );
 }
@@ -377,14 +386,6 @@ function UserName() {
 ## License
 
 MIT © Mohamed AlJamil
-
-
-
-Each command automatically:
-1. Bumps the version in `package.json`
-2. Creates a git commit and tag
-3. Builds the package
-4. Publishes to npm
 
 ## Contributing
 

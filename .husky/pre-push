@@ -1,0 +1,6 @@
+# Run full test suite and build before pushing
+echo "Running tests and build before push..."
+npm test
+npm run build
+
+echo "✅ All checks passed! Pushing to remote..."
