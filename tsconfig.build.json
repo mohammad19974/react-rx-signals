@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "dist",
+    "outDir": "dist",
+    "rootDir": "src",
+    "module": "ESNext",
+    "target": "ES2018",
+    "lib": ["ES2018", "DOM"],
+    "moduleResolution": "node",
+
+    "removeComments": true,
+    "importHelpers": true
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "src/__tests__",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "src/setupTests.ts",
+    "dist",
+    "node_modules"
+  ]
+}

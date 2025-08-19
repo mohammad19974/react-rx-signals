@@ -485,9 +485,25 @@ function SearchComponent() {
 
 ### 🎯 **Bundle Size Optimization**
 
-- **Lightweight**: Only 15.9kB unpacked, 5.3kB compressed
+- **Ultra-Small Package**: Only **13.0 kB** package size, **74.3 kB** unpacked
+- **Multiple Formats**: ESM (5.1 kB), CommonJS (5.4 kB), Minified (2.1 kB) builds
 - **Tree-shakable**: `sideEffects: false` enables optimal bundling
+- **Built with Rollup**: Advanced bundling with optimized code splitting
 - **Minimal dependencies**: Only RxJS required
+
+### 🔨 **Build & Analysis**
+
+```bash
+# Build optimized bundles
+npm run build
+
+# Analyze bundle sizes
+npm run size
+npm run analyze
+
+# Watch mode for development
+npm run build:watch
+```
 
 ### 📦 **Import Best Practices**
 

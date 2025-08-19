@@ -2,11 +2,12 @@
   "name": "react-rx-signals",
   "version": "2.0.2",
   "description": "SolidJS-style signals and stores for React using RxJS",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/*.js",
+    "dist/*.js.map",
     "dist/*.d.ts",
     "README.md"
   ],
@@ -26,7 +27,8 @@
     "solidjs"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "rollup -c",
+    "build:watch": "rollup -c -w",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -39,13 +41,19 @@
     "version:minor": "npm version minor && npm publish",
     "version:major": "npm version major && npm publish",
     "release": "npm run version:patch",
-    "prepare": "husky"
+    "prepare": "husky",
+    "analyze": "npm run build && npm pack --dry-run",
+    "size": "npm run build && ls -lh dist/"
   },
   "dependencies": {
     "rxjs": "^7.8.1",
     "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.4",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.5.2",
@@ -66,6 +74,9 @@
     "prettier": "^3.2.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "rollup": "^4.46.3",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-terser": "^7.0.2",
     "ts-jest": "^29.1.2",
     "typescript": "^5.3.3"
   },
