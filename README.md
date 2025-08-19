@@ -19,6 +19,8 @@ https://www.npmjs.com/package/react-rx-signals
 
 ```bash
 npm install react-rx-signals
+//or
+yarn add react-rx-signals
 ```
 
 ### Requirements
@@ -143,6 +145,177 @@ function UserProfile() {
     <div>
       {user.name} is {user.age} years old
     </div>
+  );
+}
+```
+
+## Lifecycle Hooks
+
+React RX Signals provides specialized hooks to integrate signals with React's lifecycle, solving common issues when using signals with `useEffect`.
+
+### `useSignalLifecycle<T>(source$, get, callback)`
+
+Track lifecycle changes of signals and stores, providing both previous and current values.
+
+**Perfect for:**
+
+- Analytics tracking
+- State change logging
+- Auditing user actions
+- Change notifications
+
+```tsx
+function UserComponent() {
+  const [getUser, setUser, user$, selectUser] = createStore({
+    name: 'John',
+    status: 'offline',
+  });
+
+  // Track name changes with previous/current values
+  useSignalLifecycle(
+    selectUser('name'),
+    () => getUser().name,
+    (prev, current) => {
+      console.log(`Name changed: ${prev} → ${current}`);
+      if (prev && prev !== current) {
+        // Log user name changes (skip initial load)
+        analytics.track('user_name_changed', { from: prev, to: current });
+      }
+    }
+  );
+
+  return <div>{getUser().name}</div>;
+}
+```
+
+### `useSignalEffect<T>(source$, effect, deps?)`
+
+Run effects when signals change - alternative to `useEffect` that works seamlessly with signals.
+
+**Perfect for:**
+
+- Side effects triggered by signal changes
+- API calls based on signal state
+- DOM manipulations
+- External service integration
+
+```tsx
+function NotificationComponent() {
+  const [getNotifications, setNotifications, notifications$] = createSignal([]);
+
+  // Effect runs whenever notifications change
+  useSignalEffect(notifications$(), (notifications) => {
+    if (notifications.length > 0) {
+      showToast(`You have ${notifications.length} new notifications`);
+
+      // Return cleanup function
+      return () => {
+        hideToast();
+      };
+    }
+  });
+
+  return <div>Notifications: {getNotifications().length}</div>;
+}
+```
+
+### `useSignalValue<T>(source$, initial)`
+
+Get signal value for use in `useEffect` dependencies. Solves the problem where signals don't trigger `useEffect`.
+
+**Perfect for:**
+
+- Using signal values in traditional `useEffect`
+- Integrating with third-party libraries expecting primitive values
+- When you need the value in dependency arrays
+
+```tsx
+function DataFetcher() {
+  const [getUserId, setUserId, userId$] = createSignal(1);
+  const userIdValue = useSignalValue(userId$(), 1);
+
+  // This effect will run when userId changes
+  useEffect(() => {
+    fetchUserData(userIdValue).then(setUserData);
+  }, [userIdValue]); // ✅ Works with useEffect
+
+  return <div>User ID: {userIdValue}</div>;
+}
+```
+
+### `useSignalCallback<T, R>(source$, callback, deps?)`
+
+Provides a callback that executes with the current signal value when called imperatively.
+
+**Perfect for:**
+
+- Event handlers that need signal state
+- Imperative operations
+- Form submissions with signal data
+- Manual triggers
+
+```tsx
+function FormComponent() {
+  const [getFormData, setFormData, formData$] = createStore({
+    name: '',
+    email: '',
+  });
+
+  const submitForm = useSignalCallback(formData$(), (data) => {
+    // Submit with current form data
+    return fetch('/api/submit', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  });
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        submitForm().then(() => console.log('Submitted!'));
+      }}
+    >
+      <input onChange={(e) => setFormData({ name: e.target.value })} />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+```
+
+### `useDebouncedSignalEffect<T>(source$, effect, delay, deps?)`
+
+Debounced version of `useSignalEffect` that prevents excessive executions when signals change rapidly.
+
+**Perfect for:**
+
+- Search input handling
+- Auto-save functionality
+- API calls with rapid state changes
+- Performance optimization
+
+```tsx
+function SearchComponent() {
+  const [getQuery, setQuery, query$] = createSignal('');
+
+  // Debounced search effect - only runs 300ms after user stops typing
+  useDebouncedSignalEffect(
+    query$(),
+    (query) => {
+      if (query.length > 2) {
+        searchAPI(query).then(setResults);
+
+        // Return cleanup to cancel previous search
+        return () => {
+          searchAPI.cancel();
+        };
+      }
+    },
+    300 // 300ms debounce
+  );
+
+  return (
+    <input placeholder="Search..." onChange={(e) => setQuery(e.target.value)} />
   );
 }
 ```
