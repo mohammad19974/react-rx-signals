@@ -60,15 +60,14 @@ describe('useSignalCallback', () => {
 
       const getMultipliedCount = useSignalCallback(
         count$(),
-        (value) => value * multiplier,
-        [multiplier]
+        (value: number) => value * multiplier
       );
 
       return (
         <div>
           <button
             data-testid="get-result"
-            onClick={() => setResult(getMultipliedCount())}
+            onClick={() => setResult(getMultipliedCount() as number)}
           >
             Get Result
           </button>

@@ -2,7 +2,6 @@ const typescript = require('@rollup/plugin-typescript');
 const resolve = require('@rollup/plugin-node-resolve');
 const commonjs = require('@rollup/plugin-commonjs');
 const terser = require('@rollup/plugin-terser').default;
-const peerDepsExternal = require('rollup-plugin-peer-deps-external');
 const dts = require('rollup-plugin-dts');
 
 const packageJson = require('./package.json');
@@ -17,7 +16,6 @@ module.exports = [
       sourcemap: false,
     },
     plugins: [
-      peerDepsExternal(),
       resolve(),
       commonjs(),
       typescript({
@@ -36,7 +34,6 @@ module.exports = [
       sourcemap: false,
     },
     plugins: [
-      peerDepsExternal(),
       resolve(),
       commonjs(),
       typescript({
@@ -56,7 +53,6 @@ module.exports = [
       sourcemap: false,
     },
     plugins: [
-      peerDepsExternal(),
       resolve(),
       commonjs(),
       typescript({

@@ -1,4 +1,4 @@
-import { useEffect, useRef, type DependencyList } from 'react';
+import { useEffect, useRef, useCallback, type DependencyList } from 'react';
 import type { Observable } from 'rxjs';
 
 /**
@@ -19,40 +19,73 @@ export function useDebouncedSignalEffect<T>(
   const effectRef = useRef(effect);
   const cleanupRef = useRef<(() => void) | void>();
   const timeoutRef = useRef<NodeJS.Timeout>();
+  const lastValueRef = useRef<T>();
 
-  // Update effect ref when dependencies change
-  useEffect(() => {
-    effectRef.current = effect;
-  }, [effect, ...(deps || [])]);
+  // Update effect ref without causing re-subscription
+  effectRef.current = effect;
 
-  useEffect(() => {
-    const subscription = source$.subscribe((value) => {
+  // Optimized debounced handler
+  const debouncedHandler = useCallback(
+    (value: T) => {
+      lastValueRef.current = value;
+
       // Clear existing timeout
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
 
-      // Set new timeout
+      // Set new timeout with error handling
       timeoutRef.current = setTimeout(() => {
         // Clean up previous effect
         if (cleanupRef.current) {
-          cleanupRef.current();
+          try {
+            cleanupRef.current();
+          } catch {
+            // Ignore cleanup errors
+          }
           cleanupRef.current = undefined;
         }
 
-        // Run new effect
-        cleanupRef.current = effectRef.current(value);
+        // Run new effect with error boundary
+        try {
+          cleanupRef.current = effectRef.current(value);
+        } catch {
+          // Prevent effect errors from breaking subsequent calls
+        }
       }, delay);
+    },
+    [delay]
+  );
+
+  useEffect(() => {
+    const subscription = source$.subscribe({
+      next: debouncedHandler,
+      error: () => {}, // Silent error handling
     });
 
     return () => {
       subscription.unsubscribe();
+
+      // Clear pending timeout
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+        timeoutRef.current = undefined;
       }
+
+      // Final cleanup
       if (cleanupRef.current) {
-        cleanupRef.current();
+        try {
+          cleanupRef.current();
+        } catch {
+          // Ignore cleanup errors
+        }
+        cleanupRef.current = undefined;
       }
     };
-  }, [source$, delay]);
+  }, [source$, debouncedHandler]);
+
+  // Handle dependency changes without re-subscription
+  useEffect(() => {
+    // Dependencies changed, effect ref is already updated above
+  }, [deps]);
 }

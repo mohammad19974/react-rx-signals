@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type DependencyList } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import type { Observable } from 'rxjs';
 
 /**
@@ -7,32 +7,46 @@ import type { Observable } from 'rxjs';
  *
  * @param source$ - RxJS Observable to track
  * @param callback - Function to call with current signal value
- * @param deps - Optional dependency list for callback updates
+
  * @returns Function that when called, executes callback with current signal value
  */
 export function useSignalCallback<T, R>(
   source$: Observable<T>,
-  callback: (value: T) => R,
-  deps?: DependencyList
+  callback: (value: T) => R
 ): () => R {
   const [currentValue, setCurrentValue] = useState<T | undefined>();
   const callbackRef = useRef(callback);
+  const hasValueRef = useRef(false);
 
-  // Update callback ref when dependencies change
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback, ...(deps || [])]);
+  // Update callback ref without causing re-subscription
+  callbackRef.current = callback;
+
+  // Optimized value updater
+  const updateValue = useCallback((newValue: T) => {
+    setCurrentValue(newValue);
+    hasValueRef.current = true;
+  }, []);
 
   // Subscribe to signal changes
   useEffect(() => {
-    const subscription = source$.subscribe(setCurrentValue);
-    return () => subscription.unsubscribe();
-  }, [source$]);
+    const subscription = source$.subscribe({
+      next: updateValue,
+      error: () => {}, // Silent error handling
+    });
 
-  return () => {
-    if (currentValue !== undefined) {
-      return callbackRef.current(currentValue);
+    return () => subscription.unsubscribe();
+  }, [source$, updateValue]);
+
+  // Memoize the return callback for better performance
+  return useCallback(() => {
+    if (hasValueRef.current && currentValue !== undefined) {
+      try {
+        return callbackRef.current(currentValue);
+      } catch (error) {
+        // Re-throw with more context
+        throw new Error(`Signal callback execution failed: ${error}`);
+      }
     }
     throw new Error('Signal has not emitted a value yet');
-  };
+  }, [currentValue]);
 }

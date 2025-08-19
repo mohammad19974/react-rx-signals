@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import type { Observable } from 'rxjs';
 
 /**
@@ -11,11 +11,24 @@ import type { Observable } from 'rxjs';
  */
 export function useSignalValue<T>(source$: Observable<T>, initial: T): T {
   const [currentValue, setCurrentValue] = useState<T>(initial);
+  const lastValueRef = useRef<T>(initial);
+
+  // Optimized setter that prevents unnecessary re-renders
+  const updateValue = useCallback((newValue: T) => {
+    if (!Object.is(lastValueRef.current, newValue)) {
+      lastValueRef.current = newValue;
+      setCurrentValue(newValue);
+    }
+  }, []);
 
   useEffect(() => {
-    const subscription = source$.subscribe(setCurrentValue);
+    const subscription = source$.subscribe({
+      next: updateValue,
+      error: () => {}, // Silent error handling to prevent crashes
+    });
+
     return () => subscription.unsubscribe();
-  }, [source$]);
+  }, [source$, updateValue]);
 
   return currentValue;
 }

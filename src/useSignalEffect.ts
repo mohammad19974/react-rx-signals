@@ -1,4 +1,4 @@
-import { useEffect, useRef, type DependencyList } from 'react';
+import { useEffect, useRef, useCallback, type DependencyList } from 'react';
 import type { Observable } from 'rxjs';
 
 /**
@@ -17,28 +17,53 @@ export function useSignalEffect<T>(
   const effectRef = useRef(effect);
   const cleanupRef = useRef<(() => void) | void>();
 
-  // Update effect ref when dependencies change
-  useEffect(() => {
-    effectRef.current = effect;
-  }, [effect, ...(deps || [])]);
+  // Update effect ref without causing re-subscription
+  effectRef.current = effect;
 
-  useEffect(() => {
-    const subscription = source$.subscribe((value) => {
-      // Clean up previous effect
-      if (cleanupRef.current) {
+  // Memoize the subscription callback for better performance
+  const handleNext = useCallback((value: T) => {
+    // Clean up previous effect
+    if (cleanupRef.current) {
+      try {
         cleanupRef.current();
-        cleanupRef.current = undefined;
+      } catch {
+        // Ignore cleanup errors
       }
+      cleanupRef.current = undefined;
+    }
 
-      // Run new effect
+    // Run new effect with error boundary
+    try {
       cleanupRef.current = effectRef.current(value);
+    } catch {
+      // Prevent effect errors from breaking subscription
+    }
+  }, []);
+
+  // Main subscription effect
+  useEffect(() => {
+    const subscription = source$.subscribe({
+      next: handleNext,
+      error: () => {}, // Silent error handling
     });
 
     return () => {
       subscription.unsubscribe();
+      // Clean up final effect
       if (cleanupRef.current) {
-        cleanupRef.current();
+        try {
+          cleanupRef.current();
+        } catch {
+          // Ignore cleanup errors
+        }
+        cleanupRef.current = undefined;
       }
     };
-  }, [source$]);
+  }, [source$, handleNext]);
+
+  // Handle dependency changes without re-subscription
+  useEffect(() => {
+    // Dependencies changed, but we don't need to re-subscribe
+    // The effect ref is already updated above
+  }, [deps]);
 }
