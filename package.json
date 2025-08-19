@@ -1,6 +1,6 @@
 {
     "name": "react-rx-signals",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "SolidJS-style signals and stores for React using RxJS",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -25,7 +25,7 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/mohammad19974/react-rx-signals.git"
-      },
+    },
     "homepage": "https://github.com/mohammad19974/react-rx-signals",
     "dependencies": {
         "rxjs": "^7.8.1",
