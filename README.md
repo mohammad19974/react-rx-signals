@@ -10,8 +10,11 @@ SolidJS-style signals and stores for React using RxJS. Provides reactive state m
 - 🎯 **TypeScript First** - Full type safety out of the box
 - 📦 **Lightweight** - Minimal bundle size impact
 - 🔧 **useSyncExternalStore** - Uses React's official external store API
-## NPM link 
+
+## NPM link
+
 https://www.npmjs.com/package/react-rx-signals
+
 ## Installation
 
 ```bash
@@ -304,6 +307,61 @@ function SearchComponent() {
 3. **Leverage selectors** - Use store selectors to subscribe to specific properties
 4. **Keep stores flat** - Avoid deeply nested state when possible
 5. **Use TypeScript** - Take advantage of full type safety
+
+## Recommendations
+
+### 🎯 **Bundle Size Optimization**
+
+- **Lightweight**: Only 15.9kB unpacked, 5.3kB compressed
+- **Tree-shakable**: `sideEffects: false` enables optimal bundling
+- **Minimal dependencies**: Only RxJS required
+
+### 📦 **Import Best Practices**
+
+```typescript
+// ✅ Recommended: Modern RxJS imports (already used in this package)
+import { BehaviorSubject, map, distinctUntilChanged } from 'rxjs';
+
+// ❌ Avoid: Legacy RxJS 5.x pattern
+import BehaviorSubject from 'rxjs/BehaviorSubject';
+import map from 'rxjs/operators/map';
+```
+
+### ⚡ **Performance Tips**
+
+- **Granular subscriptions**: Use store selectors to subscribe only to needed data
+- **Computed caching**: Leverage `distinctUntilChanged` for automatic memoization
+- **React optimization**: Components re-render only when subscribed data changes
+
+### 🔧 **Development Workflow**
+
+- **Git hooks**: Pre-commit linting and testing automatically enabled
+- **TypeScript**: Full type safety with excellent inference
+- **Testing**: Comprehensive test suite with 23 test cases
+- **CI/CD**: GitHub Actions for automated testing and building
+
+### 🎨 **Architecture Patterns**
+
+```typescript
+// ✅ Recommended: Modular state management
+const userState = createStore({ name: '', age: 0 });
+const uiState = createStore({ theme: 'light', sidebar: false });
+
+// ✅ Recommended: Computed values for derived state
+const fullName$ = createComputed(userState.select('name'), (name) =>
+  name
+    .split(' ')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+);
+
+// ✅ Recommended: Component-level subscriptions
+function UserProfile() {
+  const userName = useStore(userState.select('name'), '');
+  const theme = useStore(uiState.select('theme'), 'light');
+  // Only re-renders when name or theme changes
+}
+```
 
 ## Performance Benchmarks
 
