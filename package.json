@@ -1,0 +1,40 @@
+{
+    "name": "react-rx-signals",
+    "version": "1.0.0",
+    "description": "SolidJS-style signals and stores for React using RxJS",
+    "main": "dist/index.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "prepublishOnly": "npm run build", 
+        "version:patch": "npm version patch && npm publish",
+        "version:minor": "npm version minor && npm publish",
+        "version:major": "npm version major && npm publish",
+        "release": "npm run version:patch"
+    },
+    "keywords": [
+        "react",
+        "rxjs",
+        "signals",
+        "store",
+        "solidjs"
+    ],
+    "author": "Mohamed AlJamil",
+    "license": "MIT",
+    "dependencies": {
+        "rxjs": "^7.8.1",
+        "use-sync-external-store": "^1.2.0"
+    },
+    "devDependencies": {
+        "@types/react": "^17.0.0",
+        "@types/react-dom": "^17.0.0",
+        "@types/use-sync-external-store": "^0.0.2",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "typescript": "^5.3.3"
+    },
+    "peerDependencies": {
+        "react": ">=17.0.0"
+    }
+}
