@@ -3,8 +3,14 @@
   "version": "2.0.2",
   "description": "SolidJS-style signals and stores for React using RxJS",
   "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "README.md"
+  ],
+  "sideEffects": false,
   "author": "Mohamed AlJamil",
   "license": "MIT",
   "repository": {

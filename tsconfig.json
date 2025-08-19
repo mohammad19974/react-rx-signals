@@ -10,5 +10,13 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/__tests__",
+    "src/setupTests.ts",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "dist",
+    "node_modules"
+  ]
 }

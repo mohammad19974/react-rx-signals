@@ -1,0 +1,39 @@
+# Source files (only include dist/)
+src/
+__tests__/
+*.test.*
+*.spec.*
+
+# Development files
+.github/
+.husky/
+.eslintrc.js
+.prettierrc
+jest.config.js
+tsconfig.json
+
+# Examples and documentation
+example.tsx
+
+# Development dependencies
+node_modules/
+coverage/
+
+# Git and editor files
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime files
+.env
+.env.local
+.env.*.local
