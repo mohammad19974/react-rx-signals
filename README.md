@@ -10,7 +10,7 @@ SolidJS-style signals and stores for React using RxJS. Provides reactive state m
 - 🎯 **TypeScript First** - Full type safety out of the box
 - 📦 **Lightweight** - Minimal bundle size impact
 - 🔧 **useSyncExternalStore** - Uses React's official external store API
-## NPM like 
+## NPM link 
 https://www.npmjs.com/package/react-rx-signals
 ## Installation
 
