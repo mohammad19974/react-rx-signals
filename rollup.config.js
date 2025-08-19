@@ -3,6 +3,7 @@ const resolve = require('@rollup/plugin-node-resolve');
 const commonjs = require('@rollup/plugin-commonjs');
 const terser = require('@rollup/plugin-terser').default;
 const peerDepsExternal = require('rollup-plugin-peer-deps-external');
+const dts = require('rollup-plugin-dts');
 
 const packageJson = require('./package.json');
 
@@ -13,7 +14,7 @@ module.exports = [
     output: {
       file: packageJson.module,
       format: 'esm',
-      sourcemap: true,
+      sourcemap: false,
     },
     plugins: [
       peerDepsExternal(),
@@ -21,9 +22,7 @@ module.exports = [
       commonjs(),
       typescript({
         tsconfig: './tsconfig.build.json',
-        declaration: true,
-        declarationDir: 'dist',
-        rootDir: 'src',
+        declaration: false, // We'll generate declarations separately
       }),
     ],
     external: ['react', 'rxjs', 'use-sync-external-store/shim'],
@@ -34,7 +33,7 @@ module.exports = [
     output: {
       file: packageJson.main,
       format: 'cjs',
-      sourcemap: true,
+      sourcemap: false,
     },
     plugins: [
       peerDepsExternal(),
@@ -54,7 +53,7 @@ module.exports = [
     output: {
       file: 'dist/index.min.js',
       format: 'esm',
-      sourcemap: true,
+      sourcemap: false,
     },
     plugins: [
       peerDepsExternal(),
@@ -71,6 +70,16 @@ module.exports = [
         },
       }),
     ],
+    external: ['react', 'rxjs', 'use-sync-external-store/shim'],
+  },
+  // TypeScript declarations
+  {
+    input: 'src/index.ts',
+    output: {
+      file: 'dist/index.d.ts',
+      format: 'es',
+    },
+    plugins: [dts.default()],
     external: ['react', 'rxjs', 'use-sync-external-store/shim'],
   },
 ];

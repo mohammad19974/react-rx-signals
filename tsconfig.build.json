@@ -1,17 +1,16 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "declaration": true,
-    "declarationDir": "dist",
+    "declaration": false,
     "outDir": "dist",
     "rootDir": "src",
     "module": "ESNext",
     "target": "ES2018",
     "lib": ["ES2018", "DOM"],
     "moduleResolution": "node",
-
     "removeComments": true,
-    "importHelpers": true
+    "importHelpers": true,
+    "stripInternal": true
   },
   "include": ["src/**/*"],
   "exclude": [

@@ -485,8 +485,9 @@ function SearchComponent() {
 
 ### 🎯 **Bundle Size Optimization**
 
-- **Ultra-Small Package**: Only **13.0 kB** package size, **74.3 kB** unpacked
+- **Ultra-Small Package**: Only **9.2 kB** package size, **35.7 kB** unpacked
 - **Multiple Formats**: ESM (5.1 kB), CommonJS (5.4 kB), Minified (2.1 kB) builds
+- **Single Declaration File**: Combined TypeScript definitions (3.1 kB)
 - **Tree-shakable**: `sideEffects: false` enables optimal bundling
 - **Built with Rollup**: Advanced bundling with optimized code splitting
 - **Minimal dependencies**: Only RxJS required
