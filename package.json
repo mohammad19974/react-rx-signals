@@ -1,6 +1,6 @@
 {
   "name": "react-rx-signals",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "SolidJS-style signals and stores for React using RxJS",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
