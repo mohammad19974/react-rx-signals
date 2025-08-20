@@ -12,7 +12,7 @@ describe('useSignalLifecycle', () => {
     const lifecycleMock = jest.fn();
 
     function TestComponent() {
-      useSignalLifecycle(count$(), getCount, lifecycleMock);
+      useSignalLifecycle(count$, getCount, lifecycleMock);
 
       return (
         <div>
@@ -103,7 +103,7 @@ describe('useSignalEffect', () => {
     const effectMock = jest.fn();
 
     function TestComponent() {
-      useSignalEffect(count$(), effectMock);
+      useSignalEffect(count$, effectMock);
 
       return (
         <button
@@ -135,7 +135,7 @@ describe('useSignalEffect', () => {
     const effectMock = jest.fn(() => cleanupMock);
 
     function TestComponent() {
-      useSignalEffect(count$(), effectMock);
+      useSignalEffect(count$, effectMock);
       return (
         <button onClick={() => setCount((prev) => prev + 1)}>Increment</button>
       );

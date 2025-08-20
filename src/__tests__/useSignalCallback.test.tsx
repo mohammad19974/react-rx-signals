@@ -11,7 +11,10 @@ describe('useSignalCallback', () => {
 
     function TestComponent() {
       const [result, setResult] = React.useState<number | null>(null);
-      const getDoubledCount = useSignalCallback(count$(), (value) => value * 2);
+      const getDoubledCount = useSignalCallback(
+        count$,
+        (value: number) => value * 2
+      );
 
       return (
         <div>
@@ -59,7 +62,7 @@ describe('useSignalCallback', () => {
       const [result, setResult] = React.useState<number | null>(null);
 
       const getMultipliedCount = useSignalCallback(
-        count$(),
+        count$,
         (value: number) => value * multiplier
       );
 

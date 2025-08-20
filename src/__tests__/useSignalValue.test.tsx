@@ -10,7 +10,7 @@ describe('useSignalValue', () => {
     const effectMock = jest.fn();
 
     function TestComponent() {
-      const countValue = useSignalValue(count$(), 0);
+      const countValue = useSignalValue(count$, 0);
 
       React.useEffect(() => {
         effectMock(countValue);
@@ -48,7 +48,7 @@ describe('useSignalValue', () => {
     const [getCount, setCount, count$] = createSignal(5);
 
     function TestComponent() {
-      const countValue = useSignalValue(count$(), 999);
+      const countValue = useSignalValue(count$, 999);
       return <span data-testid="count">{countValue}</span>;
     }
 
@@ -60,7 +60,7 @@ describe('useSignalValue', () => {
     const [getCount, setCount, count$] = createSignal(10);
 
     function TestComponent() {
-      const countValue = useSignalValue(count$(), 0);
+      const countValue = useSignalValue(count$, 0);
 
       return (
         <div>

@@ -28,19 +28,13 @@ export function createSignal<T>(initial: T) {
     subject.next(newValue);
   };
 
-  // Memoize observable to prevent multiple subscriptions
-  let memoizedObservable: Observable<T> | null = null;
-  const asObservable = () => {
-    if (!memoizedObservable) {
-      memoizedObservable = subject.asObservable().pipe(
-        distinctUntilChanged(Object.is), // Use Object.is for better NaN/0/-0 handling
-        shareReplay({ bufferSize: 1, refCount: true }) // Share subscription, auto-cleanup
-      );
-    }
-    return memoizedObservable;
-  };
+  // Create the memoized observable once with proper typing
+  const observable: Observable<T> = subject.asObservable().pipe(
+    distinctUntilChanged(Object.is), // Use Object.is for better NaN/0/-0 handling
+    shareReplay({ bufferSize: 1, refCount: true }) // Share subscription, auto-cleanup
+  );
 
-  return [get, set, asObservable] as const;
+  return [get, set, observable] as const;
 }
 
 export function createComputed<T, U>(

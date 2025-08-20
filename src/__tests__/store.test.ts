@@ -103,7 +103,7 @@ describe('createStore', () => {
     });
 
     const states: TestState[] = [];
-    const observable = store$();
+    const observable = store$;
     observable
       .pipe(take(2))
       .subscribe((state: TestState) => states.push({ ...state }));

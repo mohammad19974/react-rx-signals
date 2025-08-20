@@ -76,17 +76,11 @@ export function createStore<T extends object>(initial: T) {
     return selector as Observable<T[K]>;
   };
 
-  // Memoize main observable
-  let memoizedObservable: Observable<T> | null = null;
-  const asObservable = () => {
-    if (!memoizedObservable) {
-      memoizedObservable = subject.asObservable().pipe(
-        distinctUntilChanged(shallowEqual), // Use shallow equality for objects
-        shareReplay({ bufferSize: 1, refCount: true })
-      );
-    }
-    return memoizedObservable;
-  };
+  // Create the memoized observable once
+  const observable = subject.asObservable().pipe(
+    distinctUntilChanged(shallowEqual), // Use shallow equality for objects
+    shareReplay({ bufferSize: 1, refCount: true })
+  );
 
-  return [get, set, asObservable, select] as const;
+  return [get, set, observable, select] as const;
 }

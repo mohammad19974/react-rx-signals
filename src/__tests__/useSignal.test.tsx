@@ -10,7 +10,7 @@ const [getCount, setCount, count$] = createSignal(0);
 
 // Test component that uses useSignal
 function Counter() {
-  const count = useSignal(count$(), 0);
+  const count = useSignal(count$, 0);
 
   return (
     <div>
@@ -60,9 +60,9 @@ describe('useSignal', () => {
   test('should work with computed values', () => {
     function ComputedExample() {
       const [getCount, setCount, count$] = createSignal(5);
-      const doubled$ = createComputed(count$(), (count) => count * 2);
+      const doubled$ = createComputed(count$, (count: number) => count * 2);
 
-      const count = useSignal(count$(), 0);
+      const count = useSignal(count$, 0);
       const doubled = useSignal(doubled$, 0);
 
       return (
@@ -86,12 +86,12 @@ describe('useSignal', () => {
     const [getGlobalCount, setGlobalCount, globalCount$] = createSignal(0);
 
     function ComponentA() {
-      const count = useSignal(globalCount$(), 0);
+      const count = useSignal(globalCount$, 0);
       return <span data-testid="count-a">{count}</span>;
     }
 
     function ComponentB() {
-      const count = useSignal(globalCount$(), 0);
+      const count = useSignal(globalCount$, 0);
       return <span data-testid="count-b">{count}</span>;
     }
 

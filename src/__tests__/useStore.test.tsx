@@ -20,7 +20,7 @@ describe('useStore', () => {
         email: 'john@example.com',
       });
 
-      const user = useStore(user$(), getUser());
+      const user = useStore(user$, getUser());
 
       return (
         <div>
@@ -46,7 +46,7 @@ describe('useStore', () => {
     });
 
     function UserProfile() {
-      const user = useStore(user$(), getUser());
+      const user = useStore(user$, getUser());
 
       return (
         <div>
