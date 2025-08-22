@@ -1,39 +1,35 @@
-# Source files (only include dist/)
+# Development files
 src/
 __tests__/
-*.test.*
-*.spec.*
+*.test.ts
+*.test.tsx
+*.config.js
+*.config.ts
+tsconfig*.json
 
-# Development files
-.github/
+# Example project
+example/
+
+# Development and build tools
+.eslintrc*
+.prettierrc*
 .husky/
-.eslintrc.js
-.prettierrc
 jest.config.js
-tsconfig.json
+rollup.config.js
 
-# Examples and documentation
-example.tsx
+# Documentation and examples (keep README.md)
+test-*.js
+test-*.tsx
+performance-test.tsx
 
-# Development dependencies
-node_modules/
-coverage/
-
-# Git and editor files
+# Git and IDE
 .git/
-.gitignore
 .vscode/
 .idea/
-
-# OS files
-.DS_Store
-Thumbs.db
 
 # Logs
 *.log
 npm-debug.log*
 
-# Runtime files
-.env
-.env.local
-.env.*.local
+# Dependencies
+node_modules/
