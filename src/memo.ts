@@ -15,6 +15,10 @@ const componentMemoCache = new WeakMap<
   React.MemoExoticComponent<any>
 >();
 
+// Separate cache for propsMemo since it needs string keys
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const propsMemoCache = new Map<string, React.MemoExoticComponent<any>>();
+
 /**
  * Simple observable detection without caching to avoid memory issues
  */
@@ -301,6 +305,137 @@ export function preventUnnecessaryRerenders<T extends Record<string, unknown>>(
   componentMemoCache.set(Component, MemoizedComponent);
 
   return MemoizedComponent;
+}
+
+/**
+ * Auto-memoizes any component to prevent unnecessary re-renders
+ * Perfect for child components that don't use signals
+ *
+ * @example
+ * ```tsx
+ * const OptimizedChild = autoMemo(() => {
+ *   console.log('This will only render once!');
+ *   return <div>Static content</div>;
+ * });
+ * ```
+ */
+export function autoMemo<T extends Record<string, unknown>>(
+  Component: React.ComponentType<T>
+): React.MemoExoticComponent<React.ComponentType<T>> {
+  // Check cache first
+  const cached = componentMemoCache.get(Component);
+  if (cached)
+    return cached as React.MemoExoticComponent<React.ComponentType<T>>;
+
+  // Use deep equality for maximum re-render prevention
+  const memoized = React.memo(Component, fastDeepEqual);
+  const componentName = Component.displayName || Component.name || 'Component';
+  memoized.displayName = `AutoMemo(${componentName})`;
+
+  // Cache for future use
+  componentMemoCache.set(Component, memoized);
+  return memoized;
+}
+
+/**
+ * Creates a static component that NEVER re-renders after mount
+ * Use for components with no props that display static content
+ *
+ * @example
+ * ```tsx
+ * const StaticChild = staticMemo(() => {
+ *   console.log('Renders only once ever!');
+ *   return <div>I never re-render</div>;
+ * });
+ * ```
+ */
+export function staticMemo<T extends Record<string, unknown>>(
+  Component: React.ComponentType<T>
+): React.MemoExoticComponent<React.ComponentType<T>> {
+  // Check cache first
+  const cached = componentMemoCache.get(Component);
+  if (cached)
+    return cached as React.MemoExoticComponent<React.ComponentType<T>>;
+
+  // Always return true (never re-render)
+  const memoized = React.memo(Component, () => true);
+  const componentName = Component.displayName || Component.name || 'Component';
+  memoized.displayName = `StaticMemo(${componentName})`;
+
+  // Cache for future use
+  componentMemoCache.set(Component, memoized);
+  return memoized;
+}
+
+/**
+ * Optimizes a component to only re-render when specific props change
+ *
+ * @param Component - The component to memoize
+ * @param propKeys - Array of prop keys that should trigger re-renders
+ *
+ * @example
+ * ```tsx
+ * const OptimizedComponent = propsMemo(MyComponent, ['data', 'isLoading']);
+ * // Only re-renders when data or isLoading props change
+ * ```
+ */
+export function propsMemo<T extends Record<string, unknown>>(
+  Component: React.ComponentType<T>,
+  propKeys: (keyof T)[]
+): React.MemoExoticComponent<React.ComponentType<T>> {
+  const cacheKey = `${Component.name}_${propKeys.join(',')}`;
+  const cached = propsMemoCache.get(cacheKey);
+  if (cached)
+    return cached as React.MemoExoticComponent<React.ComponentType<T>>;
+
+  const memoized = React.memo(Component, (prevProps, nextProps) => {
+    // Only compare specified props
+    for (const key of propKeys) {
+      if (!STRICT_EQUAL(prevProps[key], nextProps[key])) {
+        return false; // Props changed, re-render
+      }
+    }
+    return true; // No relevant props changed, don't re-render
+  });
+
+  const componentName = Component.displayName || Component.name || 'Component';
+  memoized.displayName = `PropsMemo(${componentName})[${propKeys.join(',')}]`;
+
+  propsMemoCache.set(cacheKey, memoized);
+  return memoized;
+}
+
+/**
+ * Hook to automatically memoize child components at runtime
+ * Use this in parent components to prevent child re-renders
+ *
+ * @example
+ * ```tsx
+ * function Parent() {
+ *   const count = useSignal(count$, 0);
+ *   const MemoizedChild = useMemoizedComponent(Child);
+ *
+ *   return (
+ *     <div>
+ *       <p>Count: {count}</p>
+ *       <MemoizedChild />
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
+export function useMemoizedComponent<T extends Record<string, unknown>>(
+  Component: React.ComponentType<T>
+): React.MemoExoticComponent<React.ComponentType<T>> {
+  return React.useMemo(() => {
+    const cached = componentMemoCache.get(Component);
+    if (cached)
+      return cached as React.MemoExoticComponent<React.ComponentType<T>>;
+
+    const memoized = React.memo(Component, fastDeepEqual);
+    componentMemoCache.set(Component, memoized);
+    return memoized;
+  }, [Component]);
 }
 
 /**

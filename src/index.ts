@@ -26,12 +26,33 @@ export { useSignalValue } from './useSignalValue';
 export { useSignalCallback } from './useSignalCallback';
 export { useDebouncedSignalEffect } from './useDebouncedSignalEffect';
 
+// Auto-memoization utilities
+export { useAutoMemo, withAutoMemo, useStaticMemo } from './useAutoMemo';
+
+// Fine-grained reactivity (SolidJS-like)
+export {
+  useFineGrainedValue,
+  FineGrainedText,
+  useFineGrainedAttr,
+  useFineGrainedClass,
+  useFineGrainedStyle,
+  FineGrainedShow,
+  FineGrainedFor,
+  withFineGrainedReactivity,
+  cleanupFineGrainedReactivity,
+  getFineGrainedStats,
+} from './useFineGrainedSignal';
+
 // Performance utilities
 export {
   createSignalMemo,
   createShallowMemo,
   withSignalTracking,
   preventUnnecessaryRerenders,
+  autoMemo,
+  staticMemo,
+  propsMemo,
+  useMemoizedComponent,
   clearMemoizationCaches,
   getMemoizationStats,
 } from './memo';
