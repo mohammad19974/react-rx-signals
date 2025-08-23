@@ -6,6 +6,7 @@ import PerformanceDemo from './components/PerformanceDemo';
 import RenderComparisonDemo from './components/RenderComparisonDemo';
 import TreeRenderDemo from './components/TreeRenderDemo';
 import AdvancedFeaturesDemo from './components/AdvancedFeaturesDemo';
+import { BasicComparisonDemo } from './components/BasicComparisonDemo';
 
 function App() {
   return (
@@ -43,6 +44,10 @@ function App() {
 
       <div style={{ marginTop: '2rem' }}>
         <AdvancedFeaturesDemo />
+      </div>
+
+      <div style={{ marginTop: '2rem' }}>
+        <BasicComparisonDemo />
       </div>
     </div>
   );
