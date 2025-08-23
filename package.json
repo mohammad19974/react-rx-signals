@@ -1,6 +1,6 @@
 {
   "name": "react-rx-signals",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "description": "SolidJS-style signals and stores for React using RxJS - 98% fewer re-renders with fine-grained reactivity",
   "readme": "NPM-README.md",
   "readmeFilename": "NPM-README.md",
