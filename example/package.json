@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "lint": "echo \"Linting skipped - TypeScript compiler handles type checking\"",
     "lint:fix": "eslint src --ext ts,tsx --fix"
   },
@@ -17,15 +20,28 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
+    "@testing-library/jest-dom": "^6.1.0",
+    "@testing-library/react": "^15.0.0",
+    "@testing-library/user-event": "^14.5.0",
+    "@types/jest": "^29.5.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.0.0",
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.1.0",
     "typescript": "^5.0.2",
     "vite": "^5.0.0"
+  },
+  "overrides": {
+    "@testing-library/react": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
   }
 }

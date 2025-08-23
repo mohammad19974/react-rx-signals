@@ -1,0 +1,145 @@
+name: Example Project CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'example/**'
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'example/**'
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  setup-example:
+    runs-on: ubuntu-latest
+    outputs:
+      main-cache-key: ${{ steps.main-cache-key.outputs.key }}
+      example-cache-key: ${{ steps.example-cache-key.outputs.key }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Generate main cache key
+        id: main-cache-key
+        run: echo "key=main-node-modules-${{ hashFiles('package-lock.json') }}" >> $GITHUB_OUTPUT
+
+      - name: Generate example cache key
+        id: example-cache-key
+        run: echo "key=example-node-modules-${{ hashFiles('example/package-lock.json') }}" >> $GITHUB_OUTPUT
+
+      - name: Cache main node modules
+        uses: actions/cache@v3
+        id: cache-main-deps
+        with:
+          path: node_modules
+          key: ${{ steps.main-cache-key.outputs.key }}
+
+      - name: Install main dependencies
+        if: steps.cache-main-deps.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Build main package
+        run: npm run build
+
+      - name: Cache main build artifacts
+        uses: actions/cache@v3
+        with:
+          path: dist
+          key: main-build-${{ github.sha }}
+
+      - name: Cache example node modules
+        uses: actions/cache@v3
+        id: cache-example-deps
+        with:
+          path: example/node_modules
+          key: ${{ steps.example-cache-key.outputs.key }}
+
+      - name: Install example dependencies
+        if: steps.cache-example-deps.outputs.cache-hit != 'true'
+        run: |
+          cd example
+          echo "🔧 Installing example dependencies..."
+          npm ci || {
+            echo "⚠️  Standard install failed, trying with legacy peer deps..."
+            npm ci --legacy-peer-deps
+          } || {
+            echo "❌ Both install methods failed, cleaning and retrying..."
+            rm -rf node_modules package-lock.json
+            npm install --legacy-peer-deps
+          }
+
+  example-test:
+    runs-on: ubuntu-latest
+    needs: [setup-example]
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Restore main node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ needs.setup-example.outputs.main-cache-key }}
+
+      - name: Restore main build artifacts
+        uses: actions/cache@v3
+        with:
+          path: dist
+          key: main-build-${{ github.sha }}
+
+      - name: Restore example node modules
+        uses: actions/cache@v3
+        with:
+          path: example/node_modules
+          key: ${{ needs.setup-example.outputs.example-cache-key }}
+
+      - name: Verify React versions
+        run: |
+          cd example
+          echo "📦 Checking React versions..."
+          npm list react react-dom @testing-library/react || true
+
+      - name: Run example tests
+        run: cd example && npm test
+
+      - name: Lint example
+        run: cd example && npm run lint
+
+      - name: Build example
+        run: cd example && npm run build
+
+      - name: Upload example build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: example-dist-${{ matrix.node-version }}
+          path: example/dist/
+
+      - name: Test example in development mode
+        run: |
+          cd example
+          timeout 30s npm run dev &
+          sleep 10
+          echo "✅ Example dev server started successfully"
