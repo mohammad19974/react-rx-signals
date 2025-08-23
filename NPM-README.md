@@ -217,7 +217,6 @@ For comprehensive guides, advanced patterns, and detailed examples, see the [Git
 
 - [GitHub Repository](https://github.com/medyll/react-rx-signals)
 - [NPM Package](https://www.npmjs.com/package/react-rx-signals)
-- [Live Demo](https://react-rx-signals-demo.netlify.app)
 
 ## 📄 **License**
 
