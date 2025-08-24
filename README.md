@@ -121,18 +121,20 @@ const Child = autoMemo(() => {
 });
 ```
 
-**Option 3: useFineGrainedValue Hook**
+**Option 3: useSignalTextProps Hook (No refs, Zero re-renders)**
 
 ```tsx
-import { useFineGrainedValue } from 'react-rx-signals';
+import { useSignalTextProps } from 'react-rx-signals';
 
 function Counter() {
   // This value updates automatically without component re-renders
-  const count = useFineGrainedValue(count$, 0);
+  const countProps = useSignalTextProps(count$, 0);
 
   return (
     <div>
-      <p>Count: {count}</p> {/* Only this text updates */}
+      <p>
+        Count: <span {...countProps} /> {/* Only this text updates */}
+      </p>
       <Child /> {/* ✅ Never re-renders! */}
     </div>
   );
@@ -175,22 +177,28 @@ const Counter = withFineGrainedReactivity(() => {
 
 ## 🧩 **Fine-Grained API Reference**
 
-### `useFineGrainedValue<T>(source$, initialValue, transform?)`
+### `useSignalTextProps<T>(source$, initialValue, transform?)`
 
 Hook that returns a reactive value without causing component re-renders:
 
 ```tsx
 function Dashboard() {
   // Values update automatically without re-rendering the component
-  const count = useFineGrainedValue(count$, 0);
-  const username = useFineGrainedValue(user$, '', (user) => user.name);
-  const progress = useFineGrainedValue(progress$, 0, (p) => `${p}%`);
+  const countProps = useSignalTextProps(count$, 0);
+  const usernameProps = useSignalTextProps(user$, '', (user) => user.name);
+  const progressProps = useSignalTextProps(progress$, 0, (p) => `${p}%`);
 
   return (
     <div>
-      <p>Count: {count}</p>
-      <p>User: {username}</p>
-      <p>Progress: {progress}</p>
+      <p>
+        Count: <span {...countProps} />
+      </p>
+      <p>
+        User: <span {...usernameProps} />
+      </p>
+      <p>
+        Progress: <span {...progressProps} />
+      </p>
       <ExpensiveChild /> {/* Never re-renders */}
     </div>
   );
@@ -860,7 +868,7 @@ function SearchComponent() {
 | Pattern                       | Use Case                    | Performance | Migration              |
 | ----------------------------- | --------------------------- | ----------- | ---------------------- |
 | `useSignal()`                 | Changing component behavior | Good        | Start here             |
-| `useFineGrainedValue()`       | Dynamic text/values         | Better      | Drop-in replacement    |
+| `useSignalTextProps()`        | Dynamic text/values         | Better      | Drop-in replacement    |
 | `<FineGrainedText>`           | High-frequency updates      | Best        | Component-based        |
 | `autoMemo()`                  | Child optimization          | Excellent   | Wrap components        |
 | `withFineGrainedReactivity()` | Entire app sections         | Ultimate    | Wrap entire components |

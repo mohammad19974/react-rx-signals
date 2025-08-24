@@ -56,14 +56,16 @@ function Counter() {
 **The Solution:** Use fine-grained reactivity
 
 ```tsx
-import { useFineGrainedValue, FineGrainedText } from 'react-rx-signals';
+import { useSignalTextProps, FineGrainedText } from 'react-rx-signals';
 
-// Option 1: Hook that updates without re-renders
+// Option 1: Hook with no refs (zero re-renders)
 function Counter() {
-  const count = useFineGrainedValue(count$, 0);
+  const countProps = useSignalTextProps(count$, 0);
   return (
     <div>
-      <p>Count: {count}</p> {/* Only this text updates */}
+      <p>
+        Count: <span {...countProps} />
+      </p>
       <Child /> {/* ✅ Never re-renders! */}
     </div>
   );
@@ -120,7 +122,7 @@ function UserProfile() {
 | ------------------------ | ------------------------ | -------------------- | --------------- |
 | **Traditional useState** | ✅ Always                | ✅ Always            | Poor            |
 | **useSignal**            | ✅ When signal changes   | ✅ Always            | Good            |
-| **useFineGrainedValue**  | ✅ Once only             | ❌ Never             | Excellent       |
+| **useSignalTextProps**   | ✅ Once only             | ❌ Never             | Excellent       |
 | **FineGrainedText**      | ✅ Once only             | ❌ Never             | Ultimate        |
 
 ## 🔧 **Advanced Features**

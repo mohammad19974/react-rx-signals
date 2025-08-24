@@ -2,7 +2,8 @@ import React from 'react';
 import {
   createSignal,
   useSignal,
-  useFineGrainedValue,
+  useSignalTextProps,
+  useTrueFineGrainedValue,
   FineGrainedText,
   useAutoMemo,
 } from 'react-rx-signals';
@@ -116,17 +117,17 @@ function UseSignalDemo() {
 
 // Demo 2: Fine-Grained Reactivity
 function FineGrainedValueDemo() {
-  const fineGrainedCount = useFineGrainedValue(count$, 0);
-  const fineGrainedName = useFineGrainedValue(name$, 'React');
+  const countProps = useSignalTextProps(count$, 0);
+  const nameProps = useSignalTextProps(name$, 'React');
 
   trackRender('FineGrained-Parent');
 
   return (
     <div className="demo-section">
-      <h4>🎯 useFineGrainedValue (Minimal Re-renders)</h4>
+      <h4>🎯 useSignalTextProps (Zero Re-renders, No Refs)</h4>
       <div className="controls">
         <p>
-          Count: {fineGrainedCount} | Name: {fineGrainedName}
+          Count: <span {...countProps} /> | Name: <span {...nameProps} />
         </p>
         <button onClick={() => setCount((c) => c + 1)}>Increment Count</button>
         <button

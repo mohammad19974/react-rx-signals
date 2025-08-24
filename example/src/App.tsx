@@ -7,10 +7,36 @@ import RenderComparisonDemo from './components/RenderComparisonDemo';
 import TreeRenderDemo from './components/TreeRenderDemo';
 import AdvancedFeaturesDemo from './components/AdvancedFeaturesDemo';
 import { BasicComparisonDemo } from './components/BasicComparisonDemo';
-
+import {
+  createSignal,
+  useSignal,
+  createSelector,
+  createSignalMemo,
+  preventUnnecessaryRerenders,
+  useTrueFineGrainedValue,
+  useSignalTextProps,
+} from 'react-rx-signals';
+import { RxLogsPanel } from './components/RxLogsPanel';
+import { RxDevtools } from './components/RxDevtools';
+const [count, setCount, count$] = createSignal(0);
 function App() {
+  const countRef = useTrueFineGrainedValue(count$, 0);
+  const countTextProps = useSignalTextProps(count$, 0);
+
   return (
     <div className="container">
+      <div>
+        {' '}
+        <button type="button" onClick={() => setCount((prev) => prev + 1)}>
+          Increment
+        </button>
+      </div>
+      <div ref={countRef}></div>
+      <div {...countTextProps} style={{ marginTop: 8 }} />
+      <div style={{ marginTop: 12 }}>
+        <RxLogsPanel sources={[{ label: 'count$', source$: count$ }]} />
+      </div>
+      <RxDevtools sources={[{ label: 'count$', source$: count$ }]} />
       <header className="header">
         <h1>React RX Signals</h1>
         <p>

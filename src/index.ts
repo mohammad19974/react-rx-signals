@@ -31,7 +31,8 @@ export { useAutoMemo, withAutoMemo, useStaticMemo } from './useAutoMemo';
 
 // Fine-grained reactivity (SolidJS-like)
 export {
-  useFineGrainedValue,
+  useTrueFineGrainedValue, // zero re-renders with ref callback
+  useSignalTextProps, // zero re-renders via data-attribute binding (no refs)
   FineGrainedText,
   useFineGrainedAttr,
   useFineGrainedClass,
