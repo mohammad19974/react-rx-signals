@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import { createSignal } from '../signal';
 import { createStore } from '../store';
 import {
-  useFineGrainedValue,
+  useTrueFineGrainedValue,
   FineGrainedText,
   useFineGrainedAttr,
   useFineGrainedStyle,
@@ -18,17 +18,16 @@ import {
 } from '../useFineGrainedSignal';
 import { useSignal } from '../useSignal';
 
-describe('useFineGrainedValue', () => {
-  test('should return reactive value and update automatically', async () => {
+describe('useTrueFineGrainedValue (replacement for useFineGrainedValue)', () => {
+  test('should update DOM without re-renders', async () => {
     const [getCount, setCount, count$] = createSignal(0);
     const user = userEvent.setup();
 
     function TestComponent() {
-      const count = useFineGrainedValue(count$, 0);
-
+      const refCb = useTrueFineGrainedValue(count$, 0);
       return (
         <div>
-          <span data-testid="count">{count}</span>
+          <span data-testid="count" ref={refCb} />
           <button
             data-testid="increment"
             onClick={() => setCount((c) => c + 1)}
@@ -40,57 +39,11 @@ describe('useFineGrainedValue', () => {
     }
 
     render(<TestComponent />);
-
     expect(screen.getByTestId('count')).toHaveTextContent('0');
-
     await user.click(screen.getByTestId('increment'));
-
-    expect(screen.getByTestId('count')).toHaveTextContent('1');
-  });
-
-  test('should apply transform function to values', async () => {
-    const [getCount, setCount, count$] = createSignal(5);
-    const user = userEvent.setup();
-
-    function TestComponent() {
-      const formattedCount = useFineGrainedValue(
-        count$,
-        0,
-        (c) => `Count: ${c}`
-      );
-
-      return (
-        <div>
-          <span data-testid="formatted">{formattedCount}</span>
-          <button
-            data-testid="increment"
-            onClick={() => setCount((c) => c + 1)}
-          >
-            Increment
-          </button>
-        </div>
-      );
-    }
-
-    render(<TestComponent />);
-
-    expect(screen.getByTestId('formatted')).toHaveTextContent('Count: 5');
-
-    await user.click(screen.getByTestId('increment'));
-
-    expect(screen.getByTestId('formatted')).toHaveTextContent('Count: 6');
-  });
-
-  test('should handle initial value correctly', () => {
-    const [getCount, setCount, count$] = createSignal(42);
-
-    function TestComponent() {
-      const count = useFineGrainedValue(count$, 999);
-      return <span data-testid="count">{count}</span>;
-    }
-
-    render(<TestComponent />);
-    expect(screen.getByTestId('count')).toHaveTextContent('42');
+    await waitFor(() =>
+      expect(screen.getByTestId('count')).toHaveTextContent('1')
+    );
   });
 });
 
@@ -590,13 +543,17 @@ describe('Integration with stores', () => {
     const user = userEvent.setup();
 
     function TestComponent() {
-      const name = useFineGrainedValue(userName$, '');
-      const age = useFineGrainedValue(userAge$, 0);
+      const nameRef = useTrueFineGrainedValue(userName$, '');
+      const ageRef = useTrueFineGrainedValue(userAge$, 0);
 
       return (
         <div>
-          <div data-testid="name">Name: {name}</div>
-          <div data-testid="age">Age: {age}</div>
+          <div>
+            Name: <span data-testid="name" ref={nameRef} />
+          </div>
+          <div>
+            Age: <span data-testid="age" ref={ageRef} />
+          </div>
           <button
             data-testid="change-name"
             onClick={() => setUser({ name: 'Jane' })}
@@ -612,16 +569,16 @@ describe('Integration with stores', () => {
 
     render(<TestComponent />);
 
-    expect(screen.getByTestId('name')).toHaveTextContent('Name: John');
-    expect(screen.getByTestId('age')).toHaveTextContent('Age: 30');
+    expect(screen.getByTestId('name')).toHaveTextContent('John');
+    expect(screen.getByTestId('age')).toHaveTextContent('30');
 
     await user.click(screen.getByTestId('change-name'));
 
-    expect(screen.getByTestId('name')).toHaveTextContent('Name: Jane');
+    expect(screen.getByTestId('name')).toHaveTextContent('Jane');
 
     await user.click(screen.getByTestId('change-age'));
 
-    expect(screen.getByTestId('age')).toHaveTextContent('Age: 31');
+    expect(screen.getByTestId('age')).toHaveTextContent('31');
   });
 
   test('should work with FineGrainedText components', async () => {
@@ -722,7 +679,7 @@ describe('Performance characteristics', () => {
     expect(childRenderCount).toBe(initialChildRenders);
   });
 
-  test('useFineGrainedValue causes component re-renders but provides reactive value', async () => {
+  test('ref-callback approach prevents re-renders and provides reactive value', async () => {
     const [getCount, setCount, count$] = createSignal(0);
     const user = userEvent.setup();
     let componentRenderCount = 0;
@@ -736,11 +693,13 @@ describe('Performance characteristics', () => {
 
     function TestComponent() {
       componentRenderCount++;
-      const count = useFineGrainedValue(count$, 0);
+      const countRef = useTrueFineGrainedValue(count$, 0);
 
       return (
         <div>
-          <p data-testid="count">Count: {count}</p>
+          <p data-testid="count-wrapper">
+            Count: <span data-testid="count" ref={countRef} />
+          </p>
           <button
             data-testid="increment"
             onClick={() => setCount((c) => c + 1)}
@@ -757,12 +716,78 @@ describe('Performance characteristics', () => {
     const initialComponentRenders = componentRenderCount;
     const initialChildRenders = childRenderCount;
 
-    expect(screen.getByTestId('count')).toHaveTextContent('Count: 0');
+    expect(screen.getByTestId('count')).toHaveTextContent('0');
 
     await user.click(screen.getByTestId('increment'));
 
-    expect(screen.getByTestId('count')).toHaveTextContent('Count: 1');
-    expect(componentRenderCount).toBe(initialComponentRenders + 1); // Component re-renders
-    expect(childRenderCount).toBe(initialChildRenders); // Child doesn't re-render due to React.memo
+    await waitFor(() => {
+      expect(screen.getByTestId('count')).toHaveTextContent('1');
+    });
+    // No re-renders with ref-callback approach
+    expect(componentRenderCount).toBe(initialComponentRenders);
+    expect(childRenderCount).toBe(initialChildRenders);
+  });
+
+  test('useTrueFineGrainedValue should prevent ALL re-renders with ref callback', async () => {
+    const [getCount, setCount, count$] = createSignal(0);
+    const user = userEvent.setup();
+    let componentRenderCount = 0;
+    let childRenderCount = 0;
+
+    const TestChild = React.memo(() => {
+      childRenderCount++;
+      return <div data-testid="child">Child component</div>;
+    });
+    TestChild.displayName = 'TestChild';
+
+    function TestComponent() {
+      componentRenderCount++;
+      const countRef = useTrueFineGrainedValue(count$, 0);
+
+      return (
+        <div>
+          <p data-testid="count-wrapper">
+            Count: <span ref={countRef} data-testid="count" />
+          </p>
+          <button
+            data-testid="increment"
+            onClick={() => setCount((c) => c + 1)}
+          >
+            Increment
+          </button>
+          <TestChild />
+        </div>
+      );
+    }
+
+    render(<TestComponent />);
+
+    const initialComponentRenders = componentRenderCount;
+    const initialChildRenders = childRenderCount;
+
+    // Check initial value
+    expect(screen.getByTestId('count')).toHaveTextContent('0');
+
+    await user.click(screen.getByTestId('increment'));
+
+    // Value should be updated in DOM
+    await waitFor(() => {
+      expect(screen.getByTestId('count')).toHaveTextContent('1');
+    });
+
+    // ✅ NO re-renders - component renders only once, child never re-renders
+    expect(componentRenderCount).toBe(initialComponentRenders);
+    expect(childRenderCount).toBe(initialChildRenders);
+
+    // Test multiple updates - still no re-renders
+    await user.click(screen.getByTestId('increment'));
+    await user.click(screen.getByTestId('increment'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('count')).toHaveTextContent('3');
+    });
+
+    expect(componentRenderCount).toBe(initialComponentRenders); // Still no re-renders!
+    expect(childRenderCount).toBe(initialChildRenders); // Child still never re-renders
   });
 });
