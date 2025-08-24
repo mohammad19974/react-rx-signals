@@ -10,7 +10,7 @@
 
   # Optional: pin the Node version used by Netlify’s build image
   [build.environment]
-    NODE_VERSION = "18"
+    NODE_VERSION = "22"
 
 # Support client-side routing so refreshes work
 [[redirects]]
