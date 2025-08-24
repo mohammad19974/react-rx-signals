@@ -214,11 +214,11 @@ function App() {
 
 ## 📚 **Full Documentation**
 
-For comprehensive guides, advanced patterns, and detailed examples, see the [GitHub Repository](https://github.com/medyll/react-rx-signals).
+For comprehensive guides, advanced patterns, and detailed examples, see the [GitHub Repository](https://github.com/mohammad19974/react-rx-signals).
 
 ## 🔗 **Links**
 
-- [GitHub Repository](https://github.com/medyll/react-rx-signals)
+- [GitHub Repository](https://github.com/mohammad19974/react-rx-signals)
 - [NPM Package](https://www.npmjs.com/package/react-rx-signals)
 
 ## 📄 **License**
