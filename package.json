@@ -2,8 +2,8 @@
   "name": "react-rx-signals",
   "version": "2.0.14",
   "description": "SolidJS-style signals and stores for React using RxJS - 98% fewer re-renders with fine-grained reactivity",
-  "readme": "NPM-README.md",
-  "readmeFilename": "NPM-README.md",
+  "readme": "README.md",
+  "readmeFilename": "README.md",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
     "dist/index.esm.js",
     "dist/index.cjs.js",
     "dist/index.d.ts",
-    "NPM-README.md"
+    "README.md"
   ],
   "sideEffects": false,
   "author": "Mohamed AlJamil",
