@@ -2,6 +2,8 @@
 
 **Ultimate Performance** - SolidJS-style signals and stores for React using RxJS. The most optimized reactive state management library featuring fine-grained reactivity, enterprise-grade caching, zero-cost abstractions, and bulletproof error handling.
 
+- [Demo](https://react-rx-signals-demo.netlify.app/)
+
 ## ✨ **What's New: Fine-Grained Reactivity**
 
 🎯 **SolidJS-like Performance in React** - Update only what changes, when it changes:
