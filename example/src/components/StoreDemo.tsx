@@ -25,7 +25,7 @@ const userActive$ = selectUser('isActive');
 
 // Component that only re-renders when name changes
 const UserNameDisplay = createSignalMemo(
-  function UserNameDisplay(): JSX.Element {
+  function UserNameDisplay(): React.ReactElement {
     const userName = useStore(userName$, '');
 
     return (
@@ -38,20 +38,22 @@ const UserNameDisplay = createSignalMemo(
 ) as React.FC;
 
 // Component that only re-renders when age changes
-const UserAgeDisplay = createSignalMemo(function UserAgeDisplay(): JSX.Element {
-  const userAge = useStore(userAge$, 0);
+const UserAgeDisplay = createSignalMemo(
+  function UserAgeDisplay(): React.ReactElement {
+    const userAge = useStore(userAge$, 0);
 
-  return (
-    <div className="info-item">
-      <label>🎂 Age</label>
-      <span>{userAge} years old</span>
-    </div>
-  );
-}) as React.FC;
+    return (
+      <div className="info-item">
+        <label>🎂 Age</label>
+        <span>{userAge} years old</span>
+      </div>
+    );
+  }
+) as React.FC;
 
 // Component that only re-renders when email changes
 const UserEmailDisplay = createSignalMemo(
-  function UserEmailDisplay(): JSX.Element {
+  function UserEmailDisplay(): React.ReactElement {
     const userEmail = useStore(userEmail$, '');
 
     return (
@@ -65,7 +67,7 @@ const UserEmailDisplay = createSignalMemo(
 
 // Component that only re-renders when active status changes
 const UserStatusDisplay = createSignalMemo(
-  function UserStatusDisplay(): JSX.Element {
+  function UserStatusDisplay(): React.ReactElement {
     const isActive = useStore(userActive$, false);
 
     return (

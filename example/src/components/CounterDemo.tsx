@@ -14,19 +14,23 @@ const [, setCount, count$] = createSignal(0);
 const isEven$ = createSelector(count$, (count) => count % 2 === 0);
 
 // Performance-optimized component that only re-renders when isEven changes
-const EvenOddDisplay = createSignalMemo(function EvenOddDisplay(): JSX.Element {
-  const isEven = useSignal(isEven$, true);
+const EvenOddDisplay = createSignalMemo(
+  function EvenOddDisplay(): React.ReactElement {
+    const isEven = useSignal(isEven$, true);
 
-  return (
-    <div className={`status-display ${isEven ? 'status-even' : 'status-odd'}`}>
-      <strong>Status: {isEven ? '✨ Even' : '🔥 Odd'}</strong>
-    </div>
-  );
-}) as React.FC;
+    return (
+      <div
+        className={`status-display ${isEven ? 'status-even' : 'status-odd'}`}
+      >
+        <strong>Status: {isEven ? '✨ Even' : '🔥 Odd'}</strong>
+      </div>
+    );
+  }
+) as React.FC;
 
 // Component that doesn't use the count signal - should never re-render
 const UnrelatedComponent = preventUnnecessaryRerenders(
-  function UnrelatedComponent(): JSX.Element {
+  function UnrelatedComponent(): React.ReactElement {
     const [localState, setLocalState] = React.useState(0);
 
     return (

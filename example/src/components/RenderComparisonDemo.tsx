@@ -93,7 +93,7 @@ const ReactParentComponent = function ReactParentComponent() {
 
 // Signal Demo Components
 const SignalCounterDisplay = createSignalMemo(
-  function SignalCounterDisplay(): JSX.Element {
+  function SignalCounterDisplay(): React.ReactElement {
     const counter = useSignal(signalCounter$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -110,7 +110,7 @@ const SignalCounterDisplay = createSignalMemo(
 ) as React.FC;
 
 const SignalNameDisplay = createSignalMemo(
-  function SignalNameDisplay(): JSX.Element {
+  function SignalNameDisplay(): React.ReactElement {
     const name = useSignal(signalName$, 'Alice');
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -127,7 +127,7 @@ const SignalNameDisplay = createSignalMemo(
 ) as React.FC;
 
 const SignalParentComponent = preventUnnecessaryRerenders(
-  function SignalParentComponent(): JSX.Element {
+  function SignalParentComponent(): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 
@@ -235,7 +235,7 @@ const SignalStressItem = createSignalMemo(function SignalStressItem({
 }: {
   signal: any;
   name: string;
-}): JSX.Element {
+}): React.ReactElement {
   const value = useSignal(signal, 0);
   const renderCount = React.useRef(0);
   renderCount.current++;
@@ -251,7 +251,7 @@ const SignalStressItem = createSignalMemo(function SignalStressItem({
 }) as React.FC<{ signal: any; name: string }>;
 
 const SignalStressTest = preventUnnecessaryRerenders(
-  function SignalStressTest(): JSX.Element {
+  function SignalStressTest(): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 

@@ -612,34 +612,36 @@ const [, setLevel2Signal, level2Signal$] = createSignal(0);
 const [, setLevel3Signal, level3Signal$] = createSignal(0);
 const [, setLevel4Signal, level4Signal$] = createSignal(0);
 
-const SignalRootNode = createSignalMemo(function SignalRootNode(): JSX.Element {
-  const rootValue = useSignal(rootSignal$, 0);
-  const renderCount = React.useRef(0);
-  renderCount.current++;
+const SignalRootNode = createSignalMemo(
+  function SignalRootNode(): React.ReactElement {
+    const rootValue = useSignal(rootSignal$, 0);
+    const renderCount = React.useRef(0);
+    renderCount.current++;
 
-  return (
-    <div className="info-item" style={{ borderLeft: '4px solid #e53e3e' }}>
-      <label>🌳 Root (Signal)</label>
-      <span>
-        Value: {rootValue} | Renders: {renderCount.current}
-      </span>
-      <button
-        className="btn btn-success"
-        style={{
-          marginTop: '0.5rem',
-          fontSize: '0.8rem',
-          padding: '0.4rem 0.8rem',
-        }}
-        onClick={() => setRootSignal((prev) => prev + 1)}
-      >
-        Update Root
-      </button>
-    </div>
-  );
-}) as React.FC;
+    return (
+      <div className="info-item" style={{ borderLeft: '4px solid #e53e3e' }}>
+        <label>🌳 Root (Signal)</label>
+        <span>
+          Value: {rootValue} | Renders: {renderCount.current}
+        </span>
+        <button
+          className="btn btn-success"
+          style={{
+            marginTop: '0.5rem',
+            fontSize: '0.8rem',
+            padding: '0.4rem 0.8rem',
+          }}
+          onClick={() => setRootSignal((prev) => prev + 1)}
+        >
+          Update Root
+        </button>
+      </div>
+    );
+  }
+) as React.FC;
 
 const SignalLevel1Container = preventUnnecessaryRerenders(
-  function SignalLevel1Container(): JSX.Element {
+  function SignalLevel1Container(): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 
@@ -668,7 +670,7 @@ const SignalLevel1Container = preventUnnecessaryRerenders(
 ) as React.FC;
 
 const SignalLevel1Node = createSignalMemo(
-  function SignalLevel1Node(): JSX.Element {
+  function SignalLevel1Node(): React.ReactElement {
     const level1Value = useSignal(level1Signal$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -696,7 +698,7 @@ const SignalLevel1Node = createSignalMemo(
 ) as React.FC;
 
 const SignalLevel2Container = preventUnnecessaryRerenders(
-  function SignalLevel2Container(): JSX.Element {
+  function SignalLevel2Container(): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 
@@ -725,7 +727,7 @@ const SignalLevel2Container = preventUnnecessaryRerenders(
 ) as React.FC;
 
 const SignalLevel2Node = createSignalMemo(
-  function SignalLevel2Node(): JSX.Element {
+  function SignalLevel2Node(): React.ReactElement {
     const level2Value = useSignal(level2Signal$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -753,7 +755,7 @@ const SignalLevel2Node = createSignalMemo(
 ) as React.FC;
 
 const SignalLevel3Container = preventUnnecessaryRerenders(
-  function SignalLevel3Container(): JSX.Element {
+  function SignalLevel3Container(): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 
@@ -782,7 +784,7 @@ const SignalLevel3Container = preventUnnecessaryRerenders(
 ) as React.FC;
 
 const SignalLevel3Node = createSignalMemo(
-  function SignalLevel3Node(): JSX.Element {
+  function SignalLevel3Node(): React.ReactElement {
     const level3Value = useSignal(level3Signal$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -810,7 +812,7 @@ const SignalLevel3Node = createSignalMemo(
 ) as React.FC;
 
 const SignalLevel4Container = preventUnnecessaryRerenders(
-  function SignalLevel4Container(): JSX.Element {
+  function SignalLevel4Container(): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 
@@ -838,7 +840,7 @@ const SignalLevel4Container = preventUnnecessaryRerenders(
 ) as React.FC;
 
 const SignalLevel4Node = createSignalMemo(
-  function SignalLevel4Node(): JSX.Element {
+  function SignalLevel4Node(): React.ReactElement {
     const level4Value = useSignal(level4Signal$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -922,34 +924,36 @@ const updateNode = (node: keyof TreeStoreState['nodes']) => {
   }));
 };
 
-const StoreRootNode = createSignalMemo(function StoreRootNode(): JSX.Element {
-  const rootValue = useStore(rootNode$, 0);
-  const renderCount = React.useRef(0);
-  renderCount.current++;
+const StoreRootNode = createSignalMemo(
+  function StoreRootNode(): React.ReactElement {
+    const rootValue = useStore(rootNode$, 0);
+    const renderCount = React.useRef(0);
+    renderCount.current++;
 
-  return (
-    <div className="info-item" style={{ borderLeft: '4px solid #e53e3e' }}>
-      <label>🌳 Root (Store)</label>
-      <span>
-        Value: {rootValue} | Renders: {renderCount.current}
-      </span>
-      <button
-        className="btn btn-warning"
-        style={{
-          marginTop: '0.5rem',
-          fontSize: '0.8rem',
-          padding: '0.4rem 0.8rem',
-        }}
-        onClick={() => updateNode('root')}
-      >
-        Update Root
-      </button>
-    </div>
-  );
-}) as React.FC;
+    return (
+      <div className="info-item" style={{ borderLeft: '4px solid #e53e3e' }}>
+        <label>🌳 Root (Store)</label>
+        <span>
+          Value: {rootValue} | Renders: {renderCount.current}
+        </span>
+        <button
+          className="btn btn-warning"
+          style={{
+            marginTop: '0.5rem',
+            fontSize: '0.8rem',
+            padding: '0.4rem 0.8rem',
+          }}
+          onClick={() => updateNode('root')}
+        >
+          Update Root
+        </button>
+      </div>
+    );
+  }
+) as React.FC;
 
 const StoreLevel1Container = preventUnnecessaryRerenders(
-  function StoreLevel1Container(): JSX.Element {
+  function StoreLevel1Container(): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 
@@ -978,7 +982,7 @@ const StoreLevel1Container = preventUnnecessaryRerenders(
 ) as React.FC;
 
 const StoreLevel1Node = createSignalMemo(
-  function StoreLevel1Node(): JSX.Element {
+  function StoreLevel1Node(): React.ReactElement {
     const level1Value = useStore(level1Node$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -1006,7 +1010,7 @@ const StoreLevel1Node = createSignalMemo(
 ) as React.FC;
 
 const StoreLevel2Container = preventUnnecessaryRerenders(
-  function StoreLevel2Container(): JSX.Element {
+  function StoreLevel2Container(): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 
@@ -1035,7 +1039,7 @@ const StoreLevel2Container = preventUnnecessaryRerenders(
 ) as React.FC;
 
 const StoreLevel2Node = createSignalMemo(
-  function StoreLevel2Node(): JSX.Element {
+  function StoreLevel2Node(): React.ReactElement {
     const level2Value = useStore(level2Node$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -1063,7 +1067,7 @@ const StoreLevel2Node = createSignalMemo(
 ) as React.FC;
 
 const StoreLevel3Container = preventUnnecessaryRerenders(
-  function StoreLevel3Container(): JSX.Element {
+  function StoreLevel3Container(): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 
@@ -1092,7 +1096,7 @@ const StoreLevel3Container = preventUnnecessaryRerenders(
 ) as React.FC;
 
 const StoreLevel3Node = createSignalMemo(
-  function StoreLevel3Node(): JSX.Element {
+  function StoreLevel3Node(): React.ReactElement {
     const level3Value = useStore(level3Node$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -1120,7 +1124,7 @@ const StoreLevel3Node = createSignalMemo(
 ) as React.FC;
 
 const StoreLevel4Container = preventUnnecessaryRerenders(
-  function StoreLevel4Container(): JSX.Element {
+  function StoreLevel4Container(): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 
@@ -1149,7 +1153,7 @@ const StoreLevel4Container = preventUnnecessaryRerenders(
 ) as React.FC;
 
 const StoreLevel4Node = createSignalMemo(
-  function StoreLevel4Node(): JSX.Element {
+  function StoreLevel4Node(): React.ReactElement {
     const level4Value = useStore(level4Node$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -1177,7 +1181,7 @@ const StoreLevel4Node = createSignalMemo(
 ) as React.FC;
 
 const StoreMetadataDisplay = createSignalMemo(
-  function StoreMetadataDisplay(): JSX.Element {
+  function StoreMetadataDisplay(): React.ReactElement {
     const metadata = useStore(metadata$, {
       totalUpdates: 0,
       lastUpdated: 'Never',

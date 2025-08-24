@@ -20,7 +20,7 @@ const counterTens$ = createSelector(counter$, (count) =>
 
 // Performance-optimized components
 const OptimizedEvenOdd = createSignalMemo(
-  function OptimizedEvenOdd(): JSX.Element {
+  function OptimizedEvenOdd(): React.ReactElement {
     const isEven = useSignal(isCounterEven$, true);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -39,7 +39,7 @@ const OptimizedEvenOdd = createSignalMemo(
 ) as React.FC;
 
 const OptimizedTensDisplay = createSignalMemo(
-  function OptimizedTensDisplay(): JSX.Element {
+  function OptimizedTensDisplay(): React.ReactElement {
     const tens = useSignal(counterTens$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -76,7 +76,7 @@ const RegularComponent = React.memo(function RegularComponent({
 
 // Component that uses signal tracking
 const TrackedComponent = withSignalTracking(
-  function TrackedComponent(): JSX.Element {
+  function TrackedComponent(): React.ReactElement {
     const counter = useSignal(counter$, 0);
     const renderCount = React.useRef(0);
     renderCount.current++;
@@ -95,7 +95,7 @@ const TrackedComponent = withSignalTracking(
 
 // Independent component that should never re-render from signal changes
 const IndependentComponent = preventUnnecessaryRerenders(
-  function IndependentComponent(): JSX.Element {
+  function IndependentComponent(): React.ReactElement {
     const [localState, setLocalState] = useState(0);
     const renderCount = React.useRef(0);
     renderCount.current++;

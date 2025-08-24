@@ -34,7 +34,7 @@ const [, setUserProfile, userProfile$, selectUserProfile] = createStore({
 
 // useSignalEffect Demo
 const SignalEffectDemo = createSignalMemo(
-  function SignalEffectDemo(): JSX.Element {
+  function SignalEffectDemo(): React.ReactElement {
     const counter = useSignal(counter$, 0);
     const [effectLogs, setEffectLogs] = useState<string[]>([]);
 
@@ -119,103 +119,107 @@ const SignalEffectDemo = createSignalMemo(
 ) as React.FC;
 
 // useSignalLifecycle Demo
-const LifecycleDemo = createSignalMemo(function LifecycleDemo(): JSX.Element {
-  const [isVisible, setIsVisible] = useState(true);
+const LifecycleDemo = createSignalMemo(
+  function LifecycleDemo(): React.ReactElement {
+    const [isVisible, setIsVisible] = useState(true);
 
-  return (
-    <div className="user-card">
-      <h3>🔄 useSignalLifecycle</h3>
-      <p
+    return (
+      <div className="user-card">
+        <h3>🔄 useSignalLifecycle</h3>
+        <p
+          style={{
+            fontSize: '0.9rem',
+            color: 'var(--text-light)',
+            marginBottom: '1rem',
+          }}
+        >
+          Component lifecycle management with signals
+        </p>
+
+        <button
+          className="btn btn-primary"
+          onClick={() => setIsVisible(!isVisible)}
+        >
+          {isVisible ? 'Hide' : 'Show'} Lifecycle Component
+        </button>
+
+        {isVisible && <LifecycleChild />}
+      </div>
+    );
+  }
+) as React.FC;
+
+const LifecycleChild = createSignalMemo(
+  function LifecycleChild(): React.ReactElement {
+    const counter = useSignal(counter$, 0);
+    const [lifecycleLogs, setLifecycleLogs] = useState<string[]>([]);
+
+    const addLifecycleLog = (message: string) => {
+      setLifecycleLogs((prev) => [
+        ...prev,
+        `${new Date().toLocaleTimeString()}: ${message}`,
+      ]);
+    };
+
+    useSignalLifecycle(
+      counter$,
+      () => counter,
+      (prevValue, currentValue) => {
+        if (prevValue === undefined) {
+          addLifecycleLog(`🟢 Mounted with counter: ${currentValue}`);
+        } else {
+          addLifecycleLog(`🔄 Updated from ${prevValue} to ${currentValue}`);
+        }
+      }
+    );
+
+    useEffect(() => {
+      return () => {
+        addLifecycleLog(`🔴 Component unmounting`);
+      };
+    }, []);
+
+    useEffect(() => {
+      return () => {
+        console.log('Child component unmounting...');
+      };
+    }, []);
+
+    return (
+      <div
         style={{
-          fontSize: '0.9rem',
-          color: 'var(--text-light)',
-          marginBottom: '1rem',
+          border: '2px solid var(--primary-color)',
+          borderRadius: '8px',
+          padding: '1rem',
+          marginTop: '1rem',
         }}
       >
-        Component lifecycle management with signals
-      </p>
-
-      <button
-        className="btn btn-primary"
-        onClick={() => setIsVisible(!isVisible)}
-      >
-        {isVisible ? 'Hide' : 'Show'} Lifecycle Component
-      </button>
-
-      {isVisible && <LifecycleChild />}
-    </div>
-  );
-}) as React.FC;
-
-const LifecycleChild = createSignalMemo(function LifecycleChild(): JSX.Element {
-  const counter = useSignal(counter$, 0);
-  const [lifecycleLogs, setLifecycleLogs] = useState<string[]>([]);
-
-  const addLifecycleLog = (message: string) => {
-    setLifecycleLogs((prev) => [
-      ...prev,
-      `${new Date().toLocaleTimeString()}: ${message}`,
-    ]);
-  };
-
-  useSignalLifecycle(
-    counter$,
-    () => counter,
-    (prevValue, currentValue) => {
-      if (prevValue === undefined) {
-        addLifecycleLog(`🟢 Mounted with counter: ${currentValue}`);
-      } else {
-        addLifecycleLog(`🔄 Updated from ${prevValue} to ${currentValue}`);
-      }
-    }
-  );
-
-  useEffect(() => {
-    return () => {
-      addLifecycleLog(`🔴 Component unmounting`);
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      console.log('Child component unmounting...');
-    };
-  }, []);
-
-  return (
-    <div
-      style={{
-        border: '2px solid var(--primary-color)',
-        borderRadius: '8px',
-        padding: '1rem',
-        marginTop: '1rem',
-      }}
-    >
-      <div className="info-item">
-        <label>Current Counter</label>
-        <span>{counter}</span>
-      </div>
-
-      <div className="console-log" style={{ maxHeight: '150px' }}>
-        <div style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
-          Lifecycle Logs:
+        <div className="info-item">
+          <label>Current Counter</label>
+          <span>{counter}</span>
         </div>
-        {lifecycleLogs.map((log, index) => (
-          <div key={index} className="log-item">
-            {log}
+
+        <div className="console-log" style={{ maxHeight: '150px' }}>
+          <div style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
+            Lifecycle Logs:
           </div>
-        ))}
+          {lifecycleLogs.map((log, index) => (
+            <div key={index} className="log-item">
+              {log}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
-}) as React.FC;
+    );
+  }
+) as React.FC;
 
 // ============================================================================
 // DEBOUNCED SIGNAL EFFECT AND SEARCH DEMO
 // ============================================================================
 
 const DebouncedSearchDemo = createSignalMemo(
-  function DebouncedSearchDemo(): JSX.Element {
+  function DebouncedSearchDemo(): React.ReactElement {
     const searchTerm = useSignal(searchTerm$, '');
     const [searchResults, setSearchResults] = useState<string[]>([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -349,7 +353,7 @@ const DebouncedSearchDemo = createSignalMemo(
 // ============================================================================
 
 const SignalValueDemo = createSignalMemo(
-  function SignalValueDemo(): JSX.Element {
+  function SignalValueDemo(): React.ReactElement {
     const counterValue = useSignalValue(counter$, 0);
     const userProfile = useSignalValue(userProfile$, {
       name: 'John Doe',
@@ -408,7 +412,7 @@ const SignalValueDemo = createSignalMemo(
 
 // Standard React component for shallow memo demonstration
 const ExpensiveComponent = React.memo(
-  function ExpensiveComponent({ user }: { user: any }): JSX.Element {
+  function ExpensiveComponent({ user }: { user: any }): React.ReactElement {
     const renderCount = React.useRef(0);
     renderCount.current++;
 
@@ -458,7 +462,7 @@ const ExpensiveComponent = React.memo(
 );
 
 const ShallowMemoDemo = createSignalMemo(
-  function ShallowMemoDemo(): JSX.Element {
+  function ShallowMemoDemo(): React.ReactElement {
     const userProfile = useStore(userProfile$, {
       name: 'John Doe',
       age: 30,
@@ -538,7 +542,7 @@ const ShallowMemoDemo = createSignalMemo(
 // ============================================================================
 
 const TrackedComponent = withSignalTracking(
-  function TrackedComponent(): JSX.Element {
+  function TrackedComponent(): React.ReactElement {
     const counter = useSignal(counter$, 0);
     const userName = useStore(selectUserProfile('name'), 'Unknown');
     const renderCount = React.useRef(0);
@@ -587,7 +591,7 @@ const TrackedComponent = withSignalTracking(
 ) as React.FC;
 
 const SignalTrackingDemo = createSignalMemo(
-  function SignalTrackingDemo(): JSX.Element {
+  function SignalTrackingDemo(): React.ReactElement {
     const [forceRenderCount, setForceRenderCount] = useState(0);
 
     return (
@@ -634,7 +638,7 @@ const SignalTrackingDemo = createSignalMemo(
 // ============================================================================
 
 const ShallowEqualDemo = createSignalMemo(
-  function ShallowEqualDemo(): JSX.Element {
+  function ShallowEqualDemo(): React.ReactElement {
     const [obj1, setObj1] = useState({ a: 1, b: 2, c: { nested: 3 } });
     const [obj2, setObj2] = useState({ a: 1, b: 2, c: { nested: 3 } });
     const [comparisonResults, setComparisonResults] = useState<{
